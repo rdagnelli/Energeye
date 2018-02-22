@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1043660144670",
+    "firebase_url": "https://energeye-b74e5.firebaseio.com",
+    "project_id": "energeye-b74e5",
+    "storage_bucket": "energeye-b74e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1043660144670:android:1ef8683ba7c9305a",
+        "android_client_info": {
+          "package_name": "com.rdagnelli.energeye"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1043660144670-vpk4766pnbt4b17p92debsanmdodmjkl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rdagnelli.energeye",
+            "certificate_hash": "dcd237962d7ef52bd9398b6cd540b50b168898ac"
+          }
+        },
+        {
+          "client_id": "1043660144670-3p0heh252a6a7um2dvgtbf4hpkfb9sgv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCW4k6j-V2A_gMGRhnRqERGKOtkkh3kuUY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1043660144670-3p0heh252a6a7um2dvgtbf4hpkfb9sgv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
