@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             switch (item.getItemId()) {
-                case R.id.navigation_home:
+                case R.id.navigation_profile:
                     transaction.replace(R.id.content, new DashboardFragment()).commit();
                     return true;
                 case R.id.navigation_dashboard:

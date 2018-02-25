@@ -1,6 +1,8 @@
 package com.rdagnelli.energeye;
 
 import android.content.Context;
+import android.graphics.BlurMaskFilter;
+import android.graphics.EmbossMaskFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +10,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.sccomponents.gauges.ScGauge;
+import com.sccomponents.gauges.ScLinearGauge;
+import com.sccomponents.gauges.ScNotches;
+
+import java.util.ArrayList;
 
 
 /**
@@ -29,6 +41,9 @@ public class DashboardFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    BarChart chart1;
+    ScLinearGauge gauge;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -67,6 +82,12 @@ public class DashboardFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_dashboard, container, false);
         //Place here view.findViewById
+
+        chart1 = (BarChart) view.findViewById(R.id.chart1);
+        gauge = (ScLinearGauge) view.findViewById(R.id.gauge);
+
+        setupChart(chart1);
+        setupGauge(gauge);
         return view;
     }
 
@@ -93,6 +114,7 @@ public class DashboardFragment extends Fragment {
         mListener = null;
     }
 
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -106,5 +128,63 @@ public class DashboardFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+
+    public void setupChart(BarChart chart) {
+        ArrayList<BarEntry> entries = addData(chart, null);
+        BarDataSet set = new BarDataSet(entries, "BarDataSet");
+        BarData data = new BarData(set);
+        data.setBarWidth(0.9f);
+
+        chart.setData(data);
+        chart.setFitBars(true);
+        chart.invalidate(); //refresh
+    }
+
+    public ArrayList<BarEntry> addData(BarChart chart, Record[] records){
+        ArrayList<BarEntry> entries = new ArrayList<BarEntry>();
+/*        for(Record record : records){
+            entries.add(new BarEntry(record.getX(),record.getY()));
+        }
+  */      entries.add(new BarEntry(0f, 30f));
+        entries.add(new BarEntry(1f, 80f));
+        entries.add(new BarEntry(2f, 60f));
+        entries.add(new BarEntry(3f, 50f));
+        // gap of 2f
+        entries.add(new BarEntry(5f, 70f));
+        entries.add(new BarEntry(6f, 60f));
+        return entries;
+    }
+
+
+    public void setupGauge(ScLinearGauge gauge){
+        assert gauge != null;
+
+        // Remove all features
+        gauge.removeAllFeatures();
+
+        // Take in mind that when you tagged a feature after this feature inherit the principal
+        // characteristic of the identifier.
+        // For example in the case of the BASE_IDENTIFIER the feature notches (always) will be
+        // settle as the color and stroke size settle for the base (in xml or via code).
+
+        // Create the base notches.
+        ScNotches base = (ScNotches) gauge.addFeature(ScNotches.class);
+        base.setTag(ScGauge.BASE_IDENTIFIER);
+        base.setCount(50);
+        base.setLength(gauge.dipToPixel(18));
+
+        // Note that I will create two progress because to one will add the blur and to the other
+        // will be add the emboss effect.
+
+        // Create the progress notches.
+        ScNotches notches = (ScNotches) gauge.addFeature(ScNotches.class);
+        notches.setTag(ScGauge.PROGRESS_IDENTIFIER);
+        notches.setCount(50);
+        notches.setLength(gauge.dipToPixel(18));
+
+        // Set the value
+        gauge.setHighValue(75);
     }
 }

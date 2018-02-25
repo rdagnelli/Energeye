@@ -39,4 +39,6 @@
     <string name="empty">Inserisci l\'email e la password</string>
     <string name="reset_password">Abbiamo inviato un\'email per aiutarti a reimpostare la tua password.</string>
     <string name="error">Si è verificato un errore.</string>
+    <string name="profile">Profilo</string>
+    <string name="grafici">Grafici</string>
 </resources>

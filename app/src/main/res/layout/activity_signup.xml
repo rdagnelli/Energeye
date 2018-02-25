@@ -75,7 +75,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@color/colorPrimaryDark"
                 android:text="@string/crea_account"
-                android:textColor="@android:color/white"
+                android:textColor="@color/white"
                 android:textStyle="bold" />
 
             <Button
