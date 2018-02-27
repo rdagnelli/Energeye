@@ -35,6 +35,7 @@ dependencies {
     implementation 'com.android.support:cardview-v7:26.0.0-beta1'
 
     compile 'com.github.paroca72:sc-gauges:2.6.10'
+    compile 'com.wdullaer:materialdatetimepicker:3.5.1'
 }
 
 

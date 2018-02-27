@@ -12,9 +12,12 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.sccomponents.gauges.ScGauge;
 import com.sccomponents.gauges.ScLinearGauge;
 import com.sccomponents.gauges.ScNotches;
@@ -84,7 +87,7 @@ public class DashboardFragment extends Fragment {
         //Place here view.findViewById
 
         chart1 = (BarChart) view.findViewById(R.id.chart1);
-        gauge = (ScLinearGauge) view.findViewById(R.id.gauge);
+        gauge = (ScLinearGauge) view.findViewById(R.id.gauge1);
 
         setupChart(chart1);
         setupGauge(gauge);
@@ -137,6 +140,15 @@ public class DashboardFragment extends Fragment {
         BarData data = new BarData(set);
         data.setBarWidth(0.9f);
 
+        IAxisValueFormatter xAxisFormatter = new DayAxisValueFormatter(chart);
+
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f); // only intervals of 1 day
+        xAxis.setLabelCount(7);
+        xAxis.setValueFormatter(xAxisFormatter);
+
+        chart.setPinchZoom(true); //scaling x and y axis at the same time
         chart.setData(data);
         chart.setFitBars(true);
         chart.invalidate(); //refresh
@@ -147,13 +159,14 @@ public class DashboardFragment extends Fragment {
 /*        for(Record record : records){
             entries.add(new BarEntry(record.getX(),record.getY()));
         }
-  */      entries.add(new BarEntry(0f, 30f));
-        entries.add(new BarEntry(1f, 80f));
-        entries.add(new BarEntry(2f, 60f));
-        entries.add(new BarEntry(3f, 50f));
-        // gap of 2f
-        entries.add(new BarEntry(5f, 70f));
-        entries.add(new BarEntry(6f, 60f));
+  */    entries.add(new BarEntry(1f, 3.2f));
+        entries.add(new BarEntry(2f, 3.4f));
+        entries.add(new BarEntry(30f, 3.7f));
+        entries.add(new BarEntry(32f, 2f));
+        entries.add(new BarEntry(50f, 1f));
+        entries.add(new BarEntry(100f, 1.5f));
+        entries.add(new BarEntry(364f, 1.7f));
+        entries.add(new BarEntry(366f, 1f));
         return entries;
     }
 
