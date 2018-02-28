@@ -43,4 +43,10 @@
     <string name="grafici">Oggi</string>
     <string name="storico">Storico</string>
     <string name="impostazioni">Impostazioni</string>
+
+    <string-array name="year_array">
+        <item>2018</item>
+        <item>2017</item>
+    </string-array>
+
 </resources>

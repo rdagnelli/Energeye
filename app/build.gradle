@@ -36,6 +36,7 @@ dependencies {
 
     compile 'com.github.paroca72:sc-gauges:2.6.10'
     compile 'com.wdullaer:materialdatetimepicker:3.5.1'
+    compile 'com.github.twinkle942910:monthyearpicker:0.0.1'
 }
 
 

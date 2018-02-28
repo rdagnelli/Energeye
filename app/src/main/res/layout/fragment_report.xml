@@ -48,6 +48,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
+                    <include
+                        android:id="@+id/tab2_include"
+                        layout="@layout/report_month"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                    </include>
 
                 </LinearLayout>
 
@@ -56,6 +62,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
+                    <include
+                        android:id="@+id/tab3_include"
+                        layout="@layout/report_year"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                    </include>
 
                 </LinearLayout>
             </FrameLayout>

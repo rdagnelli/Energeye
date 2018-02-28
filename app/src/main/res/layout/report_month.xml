@@ -13,15 +13,14 @@
 
         <EditText
             android:textAlignment="center"
-            android:id="@+id/day_date"
-            android:singleLine="true"
+            android:id="@+id/month_date"
             android:layout_width="wrap_content"
             android:layout_height="45dp"
             android:layout_margin="8dp"
             android:layout_gravity="center"
             android:background="#EEEEEE"
             android:textColor="@color/textPrimary"
-            android:hint="Seleziona una data"
+            android:hint="Seleziona mese e anno"
             android:ems="10"
             android:focusable="false"
             android:focusableInTouchMode="false"
@@ -29,7 +28,6 @@
             android:inputType="none" />
 
         <TextView
-            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -47,7 +45,7 @@
             android:layout_marginBottom="16dp">
 
             <TextView
-                android:id="@+id/day_kw"
+                android:id="@+id/month_kw"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="346"
@@ -75,7 +73,7 @@
                 android:background="@android:color/darker_gray"/>
 
             <TextView
-                android:id="@+id/day_eur"
+                android:id="@+id/month_eur"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="5,24"
@@ -96,7 +94,7 @@
         </LinearLayout>
 
         <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/day_chart"
+            android:id="@+id/month_chart"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_margin="8dp"/>

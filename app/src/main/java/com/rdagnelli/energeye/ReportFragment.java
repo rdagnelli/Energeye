@@ -1,19 +1,31 @@
 package com.rdagnelli.energeye;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+
+import java.lang.reflect.Field;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
@@ -25,7 +37,7 @@ import java.util.Calendar;
  * Use the {@link ReportFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ReportFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
+public class ReportFragment extends Fragment implements DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -37,6 +49,8 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
 
     TabHost tabHost;
     EditText date;
+    EditText dateMY;
+    Spinner dateY;
 
     int year, month, day;
     static final int DIALOG_ID = 0;
@@ -78,16 +92,47 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_analysis, container, false);
+        View view = inflater.inflate(R.layout.fragment_report, container, false);
 
         date = (EditText) view.findViewById(R.id.day_date);
         date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatePickerFragment datePicker = new DatePickerFragment();
-                datePicker.show(getActivity().getSupportFragmentManager(), "date picker");
+                Calendar now = Calendar.getInstance();
+                DatePickerDialog dpd = DatePickerDialog.newInstance(
+                        ReportFragment.this,
+                        now.get(Calendar.YEAR),
+                        now.get(Calendar.MONTH),
+                        now.get(Calendar.DAY_OF_MONTH)
+                );
+                dpd.setVersion(DatePickerDialog.Version.VERSION_2);
+                dpd.show(getActivity().getFragmentManager(), "Datepickerdialog");
             }
         });
+
+        dateMY = (EditText) view.findViewById(R.id.month_date);
+        dateMY.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                YearMonthPickerDialog yearMonthPickerDialog = new YearMonthPickerDialog(getContext(), new YearMonthPickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onYearMonthSet(int year, int month) {
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(Calendar.YEAR, year);
+                        calendar.set(Calendar.MONTH, month);
+
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
+
+                        dateMY.setText(dateFormat.format(calendar.getTime()));
+                    }
+                });
+                yearMonthPickerDialog.show();
+            }
+        });
+        dateY = (Spinner) view.findViewById(R.id.year_date);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.year_array, R.layout.spinner_style);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dateY.setAdapter(adapter);
 
         TabHost host = (TabHost) view.findViewById(R.id.tabhost);
         host.setup();
@@ -110,6 +155,11 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
         spec.setIndicator("Anno");
         host.addTab(spec);
 
+        for(int i=0;i<host.getTabWidget().getChildCount();i++)
+        {
+            TextView tv = (TextView) host.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
+            tv.setTextColor(Color.parseColor("#ffffff"));
+        }
         return view;
     }
 
@@ -137,15 +187,26 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
         mListener = null;
     }
 
+
     @Override
-    public void onDateSet(DatePicker datePicker, int y, int m, int d) {
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
         Calendar c = Calendar.getInstance();
-        c.set(Calendar.YEAR, y);
-        c.set(Calendar.MONTH, m);
-        c.set(Calendar.DAY_OF_MONTH, d);
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, monthOfYear);
+        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         String currentDateString = DateFormat.getDateInstance(DateFormat.FULL).format(c.getTime());
 
         date.setText(currentDateString);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 
     /**
