@@ -1,5 +1,7 @@
 package com.rdagnelli.energeye;
 
+import android.util.Log;
+
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
@@ -31,41 +33,19 @@ public class DayAxisValueFormatter implements IAxisValueFormatter
         String monthName = mMonths[month % mMonths.length];
         String yearName = String.valueOf(year);
 
-        if (chart.getVisibleXRange() > 30 * 6) {
+        Log.d("Chart value: ", String.valueOf(value));
+        if (chart.getVisibleXRange() > 180) {
 
             return monthName + " " + yearName;
-        } else {
+
+        }else if(chart.getVisibleXRange() > 1){
 
             int dayOfMonth = determineDayOfMonth(days, month + 12 * (year - 2016));
-/*
-            String appendix = "th";
-
-            switch (dayOfMonth) {
-                case 1:
-                    appendix = "st";
-                    break;
-                case 2:
-                    appendix = "nd";
-                    break;
-                case 3:
-                    appendix = "rd";
-                    break;
-                case 21:
-                    appendix = "st";
-                    break;
-                case 22:
-                    appendix = "nd";
-                    break;
-                case 23:
-                    appendix = "rd";
-                    break;
-                case 31:
-                    appendix = "st";
-                    break;
-            }
-
-           return dayOfMonth == 0 ? "" : dayOfMonth + appendix + " " + monthName;*/
             return dayOfMonth == 0 ? "" : dayOfMonth + " " + monthName;
+
+        }else{
+            return String.valueOf(value);
+
         }
     }
 
@@ -136,5 +116,9 @@ public class DayAxisValueFormatter implements IAxisValueFormatter
         else
             return 2020;
 
+    }
+
+    private int determineHour(int days){
+        return 0;
     }
 }

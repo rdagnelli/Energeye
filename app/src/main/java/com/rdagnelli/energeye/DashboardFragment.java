@@ -12,17 +12,22 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.sccomponents.gauges.ScGauge;
 import com.sccomponents.gauges.ScLinearGauge;
 import com.sccomponents.gauges.ScNotches;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
 /**
@@ -45,8 +50,10 @@ public class DashboardFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    BarChart chart1;
+    LineChart chart1;
     ScLinearGauge gauge;
+
+    private long referenceTimestamp;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -86,7 +93,7 @@ public class DashboardFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_dashboard, container, false);
         //Place here view.findViewById
 
-        chart1 = (BarChart) view.findViewById(R.id.chart1);
+        chart1 = (LineChart) view.findViewById(R.id.chart1);
         gauge = (ScLinearGauge) view.findViewById(R.id.gauge1);
 
         setupChart(chart1);
@@ -134,7 +141,50 @@ public class DashboardFragment extends Fragment {
     }
 
 
-    public void setupChart(BarChart chart) {
+    public void setupChart(LineChart chart) {
+        ArrayList<Record> records = new ArrayList<>();
+        records.add(new Record("DEVICEID", 2017,1,7,0,0,0,1));
+        records.add(new Record("DEVICEID", 2017,1,7,3,14,0,2));
+        records.add(new Record("DEVICEID", 2017,1,7,6,21,55,2));
+        records.add(new Record("DEVICEID", 2017,1,7,9,49,0,2));
+        records.add(new Record("DEVICEID", 2017,1,7,12,25,0,3));
+        records.add(new Record("DEVICEID", 2017,1,7,15,33,0,3));
+        records.add(new Record("DEVICEID", 2017,1,7,19,45,33,2));
+        records.add(new Record("DEVICEID", 2017,1,7,19,55,33,2));
+        records.add(new Record("DEVICEID", 2017,1,7,20,5,33,2));
+        records.add(new Record("DEVICEID", 2017,1,7,20,15,33,3));
+        records.add(new Record("DEVICEID", 2017,1,7,20,25,33,2));
+        records.add(new Record("DEVICEID", 2017,1,7,20,35,33,2));
+        records.add(new Record("DEVICEID", 2017,1,7,20,45,33,2));
+        records.add(new Record("DEVICEID", 2017,1,7,20,55,33,1));
+        records.add(new Record("DEVICEID", 2017,1,7,21,5,33,1));
+        records.add(new Record("DEVICEID", 2017,1,7,21,15,33,2));
+        records.add(new Record("DEVICEID", 2017,1,7,21,25,33,2));
+        records.add(new Record("DEVICEID", 2017,1,7,21,35,33,2));
+        records.add(new Record("DEVICEID", 2017,1,7,21,45,33,3));
+        records.add(new Record("DEVICEID", 2017,1,7,21,55,33,3));
+        records.add(new Record("DEVICEID", 2017,1,7,22,5,33,1));
+        records.add(new Record("DEVICEID", 2017,1,7,22,15,33,1));
+        ArrayList<Entry> entries = addData(chart, records);
+        LineDataSet set = new LineDataSet(entries, "LineDataSet");
+        LineData data = new LineData(set);
+
+        IAxisValueFormatter xAxisFormatter = new HourAxisValueFormatter(referenceTimestamp);
+
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1600000f); // only intervals of 1 day
+        xAxis.setLabelCount(7);
+        xAxis.setValueFormatter(xAxisFormatter);
+
+        MyMarkerView myMarkerView = new MyMarkerView(getContext(), R.layout.custom_marker_view, referenceTimestamp);
+        chart.setMarker(myMarkerView);
+        chart.setPinchZoom(true); //scaling x and y axis at the same time
+        chart.setData(data);
+        chart.invalidate(); //refresh
+    }
+
+    public void setupBarChart(BarChart chart) {
         ArrayList<BarEntry> entries = addData(chart, null);
         BarDataSet set = new BarDataSet(entries, "BarDataSet");
         BarData data = new BarData(set);
@@ -148,10 +198,25 @@ public class DashboardFragment extends Fragment {
         xAxis.setLabelCount(7);
         xAxis.setValueFormatter(xAxisFormatter);
 
+
         chart.setPinchZoom(true); //scaling x and y axis at the same time
         chart.setData(data);
         chart.setFitBars(true);
-        chart.invalidate(); //refresh
+        chart.invalidate();//refresh
+    }
+
+    public ArrayList<Entry> addData(LineChart chart, ArrayList<Record> records){
+        ArrayList<Entry> entries = new ArrayList<Entry>();
+
+        referenceTimestamp = records.get(0).getTimestamp();
+
+        for(Record record : records){
+            long currTimeStamp = record.getTimestamp();
+            float x  = currTimeStamp - referenceTimestamp;
+            entries.add(new Entry(currTimeStamp,record.getY()));
+        }
+
+        return entries;
     }
 
     public ArrayList<BarEntry> addData(BarChart chart, Record[] records){

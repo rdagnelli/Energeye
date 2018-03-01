@@ -1,5 +1,6 @@
 package com.rdagnelli.energeye;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -23,6 +24,10 @@ public class Record {
     }
 
 
+    public long getTimestamp(){
+        Timestamp timestamp = new Timestamp(dateTime.getTimeInMillis());
+        return timestamp.getTime();
+    }
     public String getDeviceID() {
         return deviceID;
     }
