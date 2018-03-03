@@ -7,11 +7,13 @@ import java.util.GregorianCalendar;
 
 
 public class Record {
+    private String recordID;
     private String deviceID;
     private GregorianCalendar dateTime;
     private int consumption;
 
-    public Record(String deviceID, int year, int month, int day, int hour, int minute, int second, int consumption){
+    public Record(String recordID, String deviceID, int year, int month, int day, int hour, int minute, int second, int consumption){
+        this.recordID = recordID;
         this.deviceID = deviceID;
         this.dateTime = new GregorianCalendar(year,month,day,hour,minute,second);
         this.consumption = consumption;
