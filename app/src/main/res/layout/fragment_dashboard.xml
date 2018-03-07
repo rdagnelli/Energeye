@@ -47,7 +47,7 @@
                             android:layout_alignParentStart="true"
                             android:layout_below="@+id/cardtitle1"
                             android:layout_marginTop="8dp"
-                            android:text="2,34"
+                            android:text="@string/undefinedvalue"
                             android:textColor="@color/textPrimary"
                             android:textSize="24sp" />
                         <TextView
@@ -68,7 +68,7 @@
                             android:layout_alignParentLeft="true"
                             android:layout_marginTop="0dp"
                             android:textSize="32sp"
-                            android:text="0,26"
+                            android:text="@string/undefinedvalue"
                             android:textColor="@color/textPrimary"
                             android:layout_below="@id/cons_value1"/>
                         <TextView
@@ -129,7 +129,7 @@
                             android:layout_alignParentLeft="true"
                             android:layout_marginTop="8dp"
                             android:textSize="24sp"
-                            android:text="32,59"
+                            android:text="@string/undefinedvalue"
                             android:textColor="@color/textPrimary"
                             android:layout_below="@id/cardtitle2"/>
                         <TextView
@@ -150,7 +150,7 @@
                             android:layout_alignParentLeft="true"
                             android:layout_marginTop="0dp"
                             android:textSize="32sp"
-                            android:text="1,12"
+                            android:text="@string/undefinedvalue"
                             android:textColor="@color/textPrimary"
                             android:layout_below="@id/cons_value2"/>
                         <TextView
@@ -197,8 +197,8 @@
                             android:id="@+id/chart1"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginLeft="8dp"
-                            android:layout_marginStart="8dp"
+                            android:layout_marginLeft="0dp"
+                            android:layout_marginStart="0dp"
                             android:layout_marginRight="16dp"
                             android:layout_marginEnd="16dp"
                             android:layout_marginTop="0dp"

@@ -15,4 +15,7 @@
     <color name="white">#fff</color>
     <color name="black">#212121</color>
 
+    <color name="mdtp_accent_color">#009688</color>
+    <color name="mdtp_accent_color_dark">#00796b</color>
+
 </resources>

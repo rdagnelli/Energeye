@@ -1,4 +1,4 @@
-package com.rdagnelli.energeye;
+package com.rdagnelli.energeye.dao;
 
 import com.android.volley.toolbox.StringRequest;
 

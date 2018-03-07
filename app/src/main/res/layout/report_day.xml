@@ -20,8 +20,9 @@
             android:layout_margin="8dp"
             android:layout_gravity="center"
             android:background="#EEEEEE"
-            android:textColor="@color/textPrimary"
             android:hint="Seleziona una data"
+            android:textColor="@color/colorPrimary"
+            android:textColorHint="@color/colorPrimary"
             android:ems="10"
             android:focusable="false"
             android:focusableInTouchMode="false"
@@ -50,11 +51,9 @@
                 android:id="@+id/day_kw"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="346"
+                android:text="@string/undefinedvalue"
                 android:textColor="@color/textPrimary"
                 android:textSize="24sp"/>
-
-
 
             <TextView
                 android:layout_width="wrap_content"
@@ -78,11 +77,9 @@
                 android:id="@+id/day_eur"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="5,24"
+                android:text="@string/undefinedvalue"
                 android:textColor="@color/textPrimary"
                 android:textSize="24sp"/>
-
-
 
             <TextView
                 android:layout_width="wrap_content"
@@ -95,11 +92,16 @@
 
         </LinearLayout>
 
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/day_chart"
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/day_graph"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_margin="8dp"/>
+            android:layout_height="260dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"/>
 
     </LinearLayout>
 

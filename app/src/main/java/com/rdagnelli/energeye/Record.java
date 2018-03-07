@@ -7,6 +7,7 @@ import java.util.GregorianCalendar;
 
 
 public class Record {
+
     private String recordID;
     private String deviceID;
     private GregorianCalendar dateTime;
@@ -52,4 +53,11 @@ public class Record {
         return consumption;
     }
 
+    public String getRecordID() {
+        return recordID;
+    }
+
+    public void setRecordID(String recordID) {
+        this.recordID = recordID;
+    }
 }

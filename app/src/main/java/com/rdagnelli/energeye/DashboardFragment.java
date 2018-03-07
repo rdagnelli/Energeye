@@ -1,10 +1,9 @@
 package com.rdagnelli.energeye;
 
 import android.content.Context;
-import android.graphics.BlurMaskFilter;
-import android.graphics.EmbossMaskFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,12 +11,13 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.StringRequest;
-import com.google.firebase.auth.FirebaseAuth;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
-import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.rdagnelli.energeye.dao.LoadLastStringRequest;
+import com.rdagnelli.energeye.dao.LoadRecordsDayStringRequest;
+import com.rdagnelli.energeye.runnable.LoadLastRunnable;
 import com.sccomponents.gauges.ScGauge;
 import com.sccomponents.gauges.ScLinearGauge;
 import com.sccomponents.gauges.ScNotches;
@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Random;
 
 
 /**
@@ -50,7 +49,14 @@ public class DashboardFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    View view;
     ScLinearGauge gauge;
+    GraphView graph;
+
+    LoadLastRunnable loadLastRunnable;
+
+
+    private Handler handler;
 
     private long referenceTimestamp;
 
@@ -89,59 +95,50 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_dashboard, container, false);
+        view =  inflater.inflate(R.layout.fragment_dashboard, container, false);
         //Place here view.findViewById
 
-
-        setupChart(view);
+        SessionHandler.devices.add("FH2W5PWL");
         setupGauge(view);
+        setupGraph(view);
+
         return view;
     }
 
-    private void setupChart(View view) {
-        GraphView graph = (GraphView) view.findViewById(R.id.chart1);
+    @Override
+    public void onResume() {
+        scheduleLoadLast(view);
 
-        LineGraphSeries<DataPoint> series = null;
+        super.onResume();
+    }
+    @Override
+    public void onPause() {
+        handler.removeCallbacks(loadLastRunnable); //stop handler when activity not visible
+        super.onPause();
+    }
 
-        // enable scaling and scrolling
-        graph.getViewport().setScalable(true);
-        graph.getViewport().setScalableY(true);
+    private void setupGraph(View view) {
+        graph = (GraphView) view.findViewById(R.id.chart1);
 
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.ITALIAN);
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(),format));
-        graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
+        Date currentDate = Calendar.getInstance().getTime();
 
-       /*//set manual x bounds to have nice steps
-        graph.getViewport().setMinX(1517616000000L);
-        graph.getViewport().setMaxX(d1.getTime());
-        graph.getViewport().setXAxisBoundsManual(true);
-*/
-        // as we use dates as labels, the human rounding to nice readable numbers
-        // is not necessary
-        graph.getGridLabelRenderer().setHumanRounding(false);
-
-        SessionHandler.devices.add("FH2W5PWL");
-        ArrayList<Record> records = new ArrayList<>();
-        Date today = Calendar.getInstance().getTime();
         ArrayList<Object> params = new ArrayList<>();
         params.add(view);
-        params.add(records);
-        params.add(today);
+        params.add(currentDate);
         params.add(SessionHandler.devices.get(0));
         params.add(graph);
-        params.add(series);
 
-
-        StringRequest stringRequest = new LoadRecordsStringRequest().getStringRequest(params);
+        StringRequest stringRequest = new LoadRecordsDayStringRequest().getStringRequest(params);
         AppController.getInstance().addToRequestQueue(stringRequest);
 
-
-
-       // graph.addSeries(series);
-        // set date label formatter
-
-
     }
+
+    public void scheduleLoadLast(final View view) {
+        handler = new Handler();
+        loadLastRunnable = new LoadLastRunnable(view,handler,gauge, graph);
+        handler.postDelayed(loadLastRunnable, 5000);
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -210,6 +207,6 @@ public class DashboardFragment extends Fragment {
         notches.setLength(gauge.dipToPixel(18));
 
         // Set the value
-        gauge.setHighValue(75);
+        gauge.setHighValue(0);
     }
 }
