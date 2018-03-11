@@ -1,4 +1,4 @@
-package com.rdagnelli.energeye;
+package com.rdagnelli.energeye.fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,22 +11,21 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.StringRequest;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
-import com.rdagnelli.energeye.dao.LoadLastStringRequest;
+import com.rdagnelli.energeye.AppController;
+import com.rdagnelli.energeye.R;
+import com.rdagnelli.energeye.SessionHandler;
+import com.rdagnelli.energeye.dao.LoadFaresStringRequest;
 import com.rdagnelli.energeye.dao.LoadRecordsDayStringRequest;
 import com.rdagnelli.energeye.runnable.LoadLastRunnable;
 import com.sccomponents.gauges.ScGauge;
 import com.sccomponents.gauges.ScLinearGauge;
 import com.sccomponents.gauges.ScNotches;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 
 /**
@@ -53,12 +52,12 @@ public class DashboardFragment extends Fragment {
     ScLinearGauge gauge;
     GraphView graph;
 
+    MaterialSpinner fareSpinner;
     LoadLastRunnable loadLastRunnable;
 
 
     private Handler handler;
 
-    private long referenceTimestamp;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -99,11 +98,13 @@ public class DashboardFragment extends Fragment {
         //Place here view.findViewById
 
         SessionHandler.devices.add("FH2W5PWL");
+        setupFareSpinner(view);
         setupGauge(view);
         setupGraph(view);
 
         return view;
     }
+
 
     @Override
     public void onResume() {
@@ -208,5 +209,16 @@ public class DashboardFragment extends Fragment {
 
         // Set the value
         gauge.setHighValue(0);
+    }
+
+    private void setupFareSpinner(View view) {
+        fareSpinner = (MaterialSpinner) view.findViewById(R.id.fare_picker_spinner);
+
+        ArrayList<Object> params = new ArrayList<>();
+        params.add(view);
+        params.add("SPINNER");
+        params.add(fareSpinner);
+        StringRequest stringRequest = new LoadFaresStringRequest().getStringRequest(params);
+        AppController.getInstance().addToRequestQueue(stringRequest);
     }
 }

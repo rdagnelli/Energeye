@@ -44,6 +44,10 @@
     <string name="storico">Storico</string>
     <string name="impostazioni">Impostazioni</string>
     <string name="undefinedvalue">---</string>
+    <string name="seleziona_la_tua_tariffa">Seleziona la tua tariffa</string>
+    <string name="conferma">CONFERMA</string>
+    <string name="errorFareSelection">Errore nella selezione della tariffa</string>
+    <string name="select_your_fare">Seleziona la tua tariffa</string>
 
     <string-array name="year_array">
         <item>Seleziona un anno</item>

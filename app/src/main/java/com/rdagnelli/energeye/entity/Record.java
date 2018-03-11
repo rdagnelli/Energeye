@@ -1,4 +1,4 @@
-package com.rdagnelli.energeye;
+package com.rdagnelli.energeye.entity;
 
 import java.sql.Timestamp;
 import java.util.Calendar;

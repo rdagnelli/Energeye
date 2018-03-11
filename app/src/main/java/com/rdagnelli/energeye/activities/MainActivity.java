@@ -1,5 +1,7 @@
-package com.rdagnelli.energeye;
+package com.rdagnelli.energeye.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -7,6 +9,18 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+
+import com.android.volley.toolbox.StringRequest;
+import com.jaredrummler.materialspinner.MaterialSpinner;
+import com.rdagnelli.energeye.AppController;
+import com.rdagnelli.energeye.R;
+import com.rdagnelli.energeye.SessionHandler;
+import com.rdagnelli.energeye.dao.LoadLastStringRequest;
+import com.rdagnelli.energeye.fragments.DashboardFragment;
+import com.rdagnelli.energeye.fragments.ReportFragment;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -43,6 +57,9 @@ public class MainActivity extends AppCompatActivity  {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.content, new DashboardFragment()).commit();
+
     }
+
+
 
 }

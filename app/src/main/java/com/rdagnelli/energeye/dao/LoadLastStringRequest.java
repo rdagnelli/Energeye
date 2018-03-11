@@ -12,8 +12,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
-import com.rdagnelli.energeye.Record;
+import com.rdagnelli.energeye.entity.Record;
 import com.rdagnelli.energeye.SessionHandler;
 import com.sccomponents.gauges.ScLinearGauge;
 
@@ -34,8 +33,8 @@ public class LoadLastStringRequest implements DaoInterface {
 
     private View view;
     private String deviceID;
-    private TextView cons;
-    private TextView eur;
+    private TextView consTextView;
+    private TextView euroTextView;
     private ScLinearGauge gauge;
     private GraphView graph;
 
@@ -43,8 +42,8 @@ public class LoadLastStringRequest implements DaoInterface {
     public StringRequest getStringRequest(ArrayList<Object> params) {
         view = (View) params.get(0);
         deviceID = (String) params.get(1);
-        cons = (TextView) params.get(2);
-        eur = (TextView) params.get(3);
+        consTextView = (TextView) params.get(2);
+        euroTextView = (TextView) params.get(3);
         gauge = (ScLinearGauge) params.get(4);
         graph = (GraphView) params.get(5);
 
@@ -56,7 +55,7 @@ public class LoadLastStringRequest implements DaoInterface {
             @Override
             public void onResponse(String response) {
                 Log.d("DEBUG", response);
-                Toast.makeText(view.getContext(), response, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(view.getContext(), response, Toast.LENGTH_SHORT).show();
                 if(response.equals("error")){
                 }else {
                     try {
@@ -76,7 +75,8 @@ public class LoadLastStringRequest implements DaoInterface {
 
 
                             Record record= new Record(recordID, deviceID, year, month, day, hour, minute, second, consumption);
-                            updateTextView(record);
+                            updateKW(record);
+                            updateEuro(record);
                             updateGauge(record);
                             updateGraph(record);
                         }
@@ -109,7 +109,7 @@ public class LoadLastStringRequest implements DaoInterface {
     }
 
 
-    private void updateTextView(Record record) {
+    private void updateKW(Record record) {
         double watt = (double) record.getConsumption();
         double kwatt = watt/1000;
 
@@ -117,9 +117,21 @@ public class LoadLastStringRequest implements DaoInterface {
         formatter.setMinimumFractionDigits(2);
         formatter.setMaximumFractionDigits(2);
         String output = formatter.format(kwatt);
-        cons.setText(String.valueOf(output));
+        consTextView.setText(String.valueOf(output));
     }
 
+    private void updateEuro(Record record) {
+        ArrayList<Record> params = new ArrayList<>();
+        params.add(record);
+
+        Double euro = SessionHandler.selectedFare.toEuro(params);
+
+        NumberFormat formatter = NumberFormat.getNumberInstance();
+        formatter.setMinimumFractionDigits(2);
+        formatter.setMaximumFractionDigits(2);
+        String output = formatter.format(euro);
+        euroTextView.setText(String.valueOf(output));
+    }
     private void updateGauge(Record record) {
         int percentage = 100 * record.getConsumption()/SessionHandler.MAX_CONS;
         gauge.setHighValue(percentage);

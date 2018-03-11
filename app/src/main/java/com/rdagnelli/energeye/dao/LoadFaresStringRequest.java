@@ -1,5 +1,6 @@
 package com.rdagnelli.energeye.dao;
 
+import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
@@ -10,10 +11,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.rdagnelli.energeye.R;
+import com.rdagnelli.energeye.entity.Fare;
+import com.rdagnelli.energeye.entity.FareBi;
+import com.rdagnelli.energeye.entity.FareMono;
 import com.rdagnelli.energeye.entity.Record;
 import com.rdagnelli.energeye.SessionHandler;
 
@@ -32,23 +38,22 @@ import java.util.Map;
 /**
  * Created by darkb on 01/06/2016.
  */
-public class LoadRecordsDayStringRequest implements DaoInterface {
+public class LoadFaresStringRequest implements DaoInterface {
 
-    ArrayList<Record> records;
-    private String deviceID;
+    private ArrayList<Fare> fares;
     private View view;
-    private Date date;
-    private GraphView graph;
+    private String purpose;
+    private MaterialSpinner spinner;
 
     @Override
     public StringRequest getStringRequest(ArrayList<Object> params) {
         view = (View) params.get(0);
-        date = (Date) params.get(1);
-        deviceID = (String) params.get(2);
-        graph = (GraphView) params.get(3);
+        purpose = (String) params.get(1);
+        if(purpose.equalsIgnoreCase("SPINNER")){
+            spinner = (MaterialSpinner) params.get(2);
+        }
 
-
-        String url = "http://www.energeye.altervista.org/loadRecordsDay.php";
+        String url = "http://www.energeye.altervista.org/loadFares.php";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 url, new Response.Listener<String>(){
 
@@ -60,25 +65,28 @@ public class LoadRecordsDayStringRequest implements DaoInterface {
                     Toast.makeText(view.getContext(), "Si è verificato un errore", Toast.LENGTH_LONG);
                 }else {
                     try {
-                        records = new ArrayList<>();
+                        fares = new ArrayList<>();
                         JSONArray objArray = new JSONArray(response);
                         for (int i = 0; i < objArray.length(); i++) {
                             JSONObject obj = objArray.getJSONObject(i);
 
-                            String recordID = obj.getString("ID");
-                            String deviceID = obj.getString("Device_ID");
-                            int year = obj.getInt("Year");
-                            int month = obj.getInt("Month");
-                            int day = obj.getInt("Day");
-                            int hour = obj.getInt("Hour");
-                            int minute = obj.getInt("Minute");
-                            int second = obj.getInt("Second");
-                            int consumption = obj.getInt("Watt");
+                            int ID = obj.getInt("ID");
+                            String name = obj.getString("Name");
+                            Double f0 = obj.getDouble("F0");
+                            Double f1 = obj.getDouble("F1");
+                            Double f23 = obj.getDouble("F23");
 
-                            Record currRecord = new Record(recordID, deviceID, year, month, day, hour, minute, second, consumption);
-                            records.add(currRecord);
+                            Fare currFare;
+                            if(f0 == 0){ //bioraria
+                                currFare = new FareBi(ID, name, f1, f23);
+                            }else{ //monoraria
+                                currFare = new FareMono(ID,name,f0);
+                            }
+                            fares.add(currFare);
                         }
-                        drawGraph();
+                        if(purpose.equalsIgnoreCase("SPINNER")){
+                            fillSpinner(fares);
+                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -100,37 +108,34 @@ public class LoadRecordsDayStringRequest implements DaoInterface {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("device_id", deviceID);
-                params.put("day", (String) DateFormat.format("dd", date));
-                params.put("month", (String) DateFormat.format("MM", date));
-                params.put("year", (String) DateFormat.format("yy", date));
-
                 return params;
             }
         };
         return strReq;
     }
 
-    private void drawGraph() {
+    private void fillSpinner(final ArrayList<Fare> fareArrayList) {
 
-        DataPoint[] dataPoints = new DataPoint[records.size()];
-        for(int i=0; i<dataPoints.length; i++){
-            dataPoints[i] = new DataPoint(records.get(dataPoints.length - i -1).getDateTime().getTime(), records.get(dataPoints.length - i -1).getY()/1000);
+        final String[] fares = new String[fareArrayList.size()+1];
+        fares[0] = view.getResources().getString(R.string.select_your_fare);
+        for(int i =0; i<fareArrayList.size(); i++){
+            fares[i+1] = fareArrayList.get(i).getName();
         }
-        SessionHandler.dashboardSeries = new LineGraphSeries<>(dataPoints);
-        graph.addSeries( SessionHandler.dashboardSeries);
 
-
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.ITALIAN);
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(view.getContext(),format));
-        graph.getViewport().setMinX(dataPoints[0].getX());
-        graph.getViewport().setMaxX(dataPoints[dataPoints.length-1].getX());
-        graph.getViewport().setXAxisBoundsManual(true);
-        graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
-        graph.getGridLabelRenderer().setNumVerticalLabels(5);
-        graph.getGridLabelRenderer().setHumanRounding(true);
+        spinner.setItems(fares);
+        spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+            @Override public void onItemSelected(MaterialSpinner ms, int position, long id, String item) {
+                spinner.setText(item);
+                if(position != 0) { //Seleziona una tariffa
+                    SessionHandler.selectedFare = fareArrayList.get(position - 1);
+                    Toast.makeText(view.getContext(), "Tariffa \"" + SessionHandler.selectedFare.getName() + " \" selezionata", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
     }
+
+
 
 
 }

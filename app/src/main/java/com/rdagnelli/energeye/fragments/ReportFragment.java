@@ -1,19 +1,15 @@
-package com.rdagnelli.energeye;
+package com.rdagnelli.energeye.fragments;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TabHost;
@@ -23,11 +19,13 @@ import android.widget.Toast;
 import com.android.volley.toolbox.StringRequest;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.rdagnelli.energeye.AppController;
+import com.rdagnelli.energeye.R;
+import com.rdagnelli.energeye.SessionHandler;
 import com.rdagnelli.energeye.dao.LoadRecordsDayStringRequest;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
-import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,9 +60,6 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
     GraphView yearGraph;
 
     View view;
-
-    int year, month, day;
-    static final int DIALOG_ID = 0;
 
     private OnFragmentInteractionListener mListener;
 
