@@ -21,7 +21,7 @@
                 android:layout_marginBottom="4dp">
 
                 <com.jaredrummler.materialspinner.MaterialSpinner
-                    android:id="@+id/fare_picker_spinner"
+                    android:id="@+id/fare_picker_spinner_dashboard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/seleziona_la_tua_tariffa"
@@ -135,7 +135,7 @@
                             android:id="@+id/cardtitle2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Totale"
+                            android:text="@string/totale"
                             android:textColor="@color/textPrimary"
                             android:textSize="14sp"
                             />
@@ -155,7 +155,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="0dp"
                             android:textSize="12sp"
-                            android:text="kW"
+                            android:text="@string/kw"
                             android:padding="3dp"
                             android:textColor="@color/textSecondary"
                             android:layout_toRightOf="@id/cons_value2"
@@ -176,7 +176,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="0dp"
                             android:textSize="16sp"
-                            android:text="€"
+                            android:text="@string/eur"
                             android:padding="5dp"
                             android:textColor="@color/textSecondary"
                             android:layout_toRightOf="@id/eur_value2"

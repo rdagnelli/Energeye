@@ -1,5 +1,7 @@
 package com.rdagnelli.energeye;
 
+import android.content.SharedPreferences;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;

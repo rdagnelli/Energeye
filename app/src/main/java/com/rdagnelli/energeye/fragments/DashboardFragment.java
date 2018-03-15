@@ -212,7 +212,9 @@ public class DashboardFragment extends Fragment {
     }
 
     private void setupFareSpinner(View view) {
-        fareSpinner = (MaterialSpinner) view.findViewById(R.id.fare_picker_spinner);
+        fareSpinner = (MaterialSpinner) view.findViewById(R.id.fare_picker_spinner_dashboard);
+
+
 
         ArrayList<Object> params = new ArrayList<>();
         params.add(view);
@@ -220,5 +222,6 @@ public class DashboardFragment extends Fragment {
         params.add(fareSpinner);
         StringRequest stringRequest = new LoadFaresStringRequest().getStringRequest(params);
         AppController.getInstance().addToRequestQueue(stringRequest);
+
     }
 }

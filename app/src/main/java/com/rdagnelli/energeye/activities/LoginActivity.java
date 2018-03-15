@@ -35,77 +35,83 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        emailEditText = findViewById(R.id.login_email);
-        passwordEditText = findViewById(R.id.login_password);
+        if(mAuth.getCurrentUser() != null){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }else {
+            emailEditText = findViewById(R.id.login_email);
+            passwordEditText = findViewById(R.id.login_password);
 
-        loginButton = findViewById(R.id.login_button);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+            loginButton = findViewById(R.id.login_button);
+            loginButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                if(!emailEditText.getText().toString().equals("") &&
-                        !passwordEditText.getText().toString().equals("")){
-                    mAuth.signInWithEmailAndPassword(emailEditText.getText().toString(), passwordEditText.getText().toString())
-                            .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        // Sign in success, update UI with the signed-in user's information
-                                        Log.d("LOGIN", "signInWithEmail:success");
-                                        FirebaseUser user = mAuth.getCurrentUser();
-                                        updateUI(user);
-                                    } else {
-                                        // If sign in fails, display a message to the user.
-                                        Log.w("LOGIN", "signInWithEmail:failure", task.getException());
-                                        Toast.makeText(LoginActivity.this, "Email o password errati, riprovare.",
-                                                Toast.LENGTH_SHORT).show();
-                                        updateUI(null);
+                    if (!emailEditText.getText().toString().equals("") &&
+                            !passwordEditText.getText().toString().equals("")) {
+                        mAuth.signInWithEmailAndPassword(emailEditText.getText().toString(), passwordEditText.getText().toString())
+                                .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()) {
+                                            // Sign in success, update UI with the signed-in user's information
+                                            Log.d("LOGIN", "signInWithEmail:success");
+                                            FirebaseUser user = mAuth.getCurrentUser();
+                                            updateUI(user);
+                                        } else {
+                                            // If sign in fails, display a message to the user.
+                                            Log.w("LOGIN", "signInWithEmail:failure", task.getException());
+                                            Toast.makeText(LoginActivity.this, "Email o password errati, riprovare.",
+                                                    Toast.LENGTH_SHORT).show();
+                                            updateUI(null);
+                                        }
+
+                                        // ...
                                     }
+                                });
+                    } else {
+                        Toast.makeText(LoginActivity.this, R.string.empty,
+                                Toast.LENGTH_SHORT).show();
+                    }
 
-                                    // ...
-                                }
-                            });
-                }else{
-                    Toast.makeText(LoginActivity.this, R.string.empty,
-                            Toast.LENGTH_SHORT).show();
                 }
+            });
 
-            }
-        });
-
-        lostPasswordButton = findViewById(R.id.login_lost_password);
-        lostPasswordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(!emailEditText.getText().toString().equals("")){
-                    mAuth.sendPasswordResetEmail(emailEditText.getText().toString())
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(LoginActivity.this, R.string.reset_password,
-                                                Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(LoginActivity.this, R.string.error,
-                                                Toast.LENGTH_SHORT).show();
+            lostPasswordButton = findViewById(R.id.login_lost_password);
+            lostPasswordButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!emailEditText.getText().toString().equals("")) {
+                        mAuth.sendPasswordResetEmail(emailEditText.getText().toString())
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(LoginActivity.this, R.string.reset_password,
+                                                    Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(LoginActivity.this, R.string.error,
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
                                     }
-                                }
-                            });
-                }else{
-                    Toast.makeText(LoginActivity.this, "Devi prima inserire la tua email nel primo campo.",
-                            Toast.LENGTH_SHORT).show();
+                                });
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Devi prima inserire la tua email nel primo campo.",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
-        });
+            });
 
-        registerButton = findViewById(R.id.login_register);
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(LoginActivity.this, SignupActivity.class);
-                startActivity(i);
-            }
-        });
+            registerButton = findViewById(R.id.login_register);
+            registerButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(LoginActivity.this, SignupActivity.class);
+                    startActivity(i);
+                }
+            });
+        }
     }
 
 

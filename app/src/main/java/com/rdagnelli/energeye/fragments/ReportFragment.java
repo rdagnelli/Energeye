@@ -17,12 +17,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.StringRequest;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.rdagnelli.energeye.AppController;
 import com.rdagnelli.energeye.R;
 import com.rdagnelli.energeye.SessionHandler;
+import com.rdagnelli.energeye.dao.LoadFaresStringRequest;
 import com.rdagnelli.energeye.dao.LoadRecordsDayStringRequest;
+import com.rdagnelli.energeye.dao.LoadRecordsMonthStringRequest;
+import com.rdagnelli.energeye.dao.LoadRecordsYearStringRequest;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
@@ -53,11 +57,16 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
     TabHost tabHost;
     EditText dateD;
     EditText dateMY;
-    Spinner dateY;
+    MaterialSpinner dateY;
 
     GraphView dayGraph;
     GraphView monthGraph;
     GraphView yearGraph;
+
+    MaterialSpinner daySpinner;
+    MaterialSpinner monthSpinner;
+    MaterialSpinner yearSpinner;
+
 
     View view;
 
@@ -102,9 +111,21 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
 
         setupTabs(view);
         setupDatePickers(view);
+        setupSpinners(view);
         setupGraphs(view);
 
         return view;
+    }
+
+    private void setupSpinners(View view) {
+            daySpinner = (MaterialSpinner) view.findViewById(R.id.fare_picker_spinner_day);
+
+            ArrayList<Object> params = new ArrayList<>();
+            params.add(view);
+            params.add("SPINNER");
+            params.add(daySpinner);
+            StringRequest stringRequest = new LoadFaresStringRequest().getStringRequest(params);
+            AppController.getInstance().addToRequestQueue(stringRequest);
     }
 
     private void setupGraphs(View view) {
@@ -191,7 +212,7 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
                         params.add(SessionHandler.devices.get(0));
                         params.add(monthGraph);
 
-                        StringRequest stringRequest = new LoadRecordsDayStringRequest().getStringRequest(params);
+                        StringRequest stringRequest = new LoadRecordsMonthStringRequest().getStringRequest(params);
                         AppController.getInstance().addToRequestQueue(stringRequest);
                     }
                 },
@@ -199,10 +220,26 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
                 yearMonthPickerDialog.show();
             }
         });
-        dateY = (Spinner) view.findViewById(R.id.year_date);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.year_array, R.layout.spinner_style);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        dateY.setAdapter(adapter);
+        dateY = (MaterialSpinner) view.findViewById(R.id.year_date);
+        String[] years = {getString(R.string.select_year), "2018","2017"};
+        dateY.setItems(years);
+        dateY.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+
+            @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                if (position > 0) {
+                    Calendar c = Calendar.getInstance();
+                    c.set(Calendar.YEAR, Integer.parseInt(item));
+                    ArrayList<Object> params = new ArrayList<>();
+                    params.add(view);
+                    params.add(c);
+                    params.add(SessionHandler.devices.get(0));
+                    params.add(yearGraph);
+
+                    StringRequest stringRequest = new LoadRecordsYearStringRequest().getStringRequest(params);
+                    AppController.getInstance().addToRequestQueue(stringRequest);
+                }
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -248,8 +285,8 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
         params.add(SessionHandler.devices.get(0));
         params.add(dayGraph);
 
-        StringRequest stringRequest = new LoadRecordsDayStringRequest().getStringRequest(params);
-        AppController.getInstance().addToRequestQueue(stringRequest);
+        //StringRequest stringRequest = new LoadRecordsDayStringRequest().getStringRequest(params);
+        //AppController.getInstance().addToRequestQueue(stringRequest);
 
     }
 
@@ -265,7 +302,7 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
             params.add(SessionHandler.devices.get(0));
             params.add(yearGraph);
 
-            StringRequest stringRequest = new LoadRecordsDayStringRequest().getStringRequest(params);
+            StringRequest stringRequest = new LoadRecordsYearStringRequest().getStringRequest(params);
             AppController.getInstance().addToRequestQueue(stringRequest);
         }
     }

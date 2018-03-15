@@ -23,6 +23,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -113,6 +114,7 @@ public class LoadRecordsDayStringRequest implements DaoInterface {
 
     private void drawGraph() {
 
+
         DataPoint[] dataPoints = new DataPoint[records.size()];
         for(int i=0; i<dataPoints.length; i++){
             dataPoints[i] = new DataPoint(records.get(dataPoints.length - i -1).getDateTime().getTime(), records.get(dataPoints.length - i -1).getY()/1000);
@@ -129,6 +131,7 @@ public class LoadRecordsDayStringRequest implements DaoInterface {
         graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
         graph.getGridLabelRenderer().setNumVerticalLabels(5);
         graph.getGridLabelRenderer().setHumanRounding(true);
+
 
     }
 

@@ -48,6 +48,13 @@
     <string name="conferma">CONFERMA</string>
     <string name="errorFareSelection">Errore nella selezione della tariffa</string>
     <string name="select_your_fare">Seleziona la tua tariffa</string>
+    <string name="select_your_fare_short">Tariffa</string>
+    <string name="totale">Totale</string>
+    <string name="kw">kW</string>
+    <string name="eur">€</string>
+    <string name="consumo_totale">Consumo totale</string>
+    <string name="seleziona_una_data">Seleziona una data</string>
+    <string name="select_year">Seleziona un anno</string>
 
     <string-array name="year_array">
         <item>Seleziona un anno</item>
