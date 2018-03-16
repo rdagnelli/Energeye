@@ -31,18 +31,28 @@ public class FareBi extends Fare {
      */
     @Override
     public Double toEuro(ArrayList<Record> records) {
-        Double sumF1 = 0.0;
-        Double sumF23 = 0.0;
+        Double pulsesF1 = 0.0;
+        Double pulsesF23 = 0.0;
 
         for(Record record : records){
             if(record.getDateTime().get(Calendar.DAY_OF_WEEK) > 1 && record.getDateTime().get(Calendar.DAY_OF_WEEK) < 7 &&
                 record.getDateTime().get(Calendar.HOUR_OF_DAY) >= 8 &&  record.getDateTime().get(Calendar.HOUR_OF_DAY) <= 19){ //from monday to friday  8.00 to 19.00
-                sumF1+= record.getConsumption();
+                pulsesF1++;
             }else{
-                sumF23+= record.getConsumption();
+                pulsesF23++;
             }
         }
-        Double result = ((sumF1 * f1) + (sumF23 * f23)) / 1000;
-        return result;
+        return (pulsesF1/1000 * f1) + (pulsesF23/1000 * f23);
+
+    }
+
+    @Override
+    public Double toEuro(Record record) {
+        if(record.getDateTime().get(Calendar.DAY_OF_WEEK) > 1 && record.getDateTime().get(Calendar.DAY_OF_WEEK) < 7 &&
+                record.getDateTime().get(Calendar.HOUR_OF_DAY) >= 8 &&  record.getDateTime().get(Calendar.HOUR_OF_DAY) <= 19) { //from monday to friday  8.00 to 19.00
+            return record.getConsumption()*f1/1000;
+        }else {
+            return record.getConsumption()*f23/1000;
+        }
     }
 }

@@ -51,6 +51,7 @@
     <string name="select_your_fare_short">Tariffa</string>
     <string name="totale">Totale</string>
     <string name="kw">kW</string>
+    <string name="kwh">kWh</string>
     <string name="eur">€</string>
     <string name="consumo_totale">Consumo totale</string>
     <string name="seleziona_una_data">Seleziona una data</string>

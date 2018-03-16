@@ -26,7 +26,6 @@ public class Record {
         this.consumption = consumption;
     }
 
-
     public long getTimestamp(){
         Timestamp timestamp = new Timestamp(dateTime.getTimeInMillis());
         return timestamp.getTime();
@@ -35,21 +34,11 @@ public class Record {
         return deviceID;
     }
 
-
     public GregorianCalendar getDateTime() {
         return dateTime;
     }
 
-
     public int getConsumption() {
-        return consumption;
-    }
-
-    public float getX(){
-        return dateTime.get(Calendar.DAY_OF_MONTH);
-    }
-
-    public float getY(){
         return consumption;
     }
 

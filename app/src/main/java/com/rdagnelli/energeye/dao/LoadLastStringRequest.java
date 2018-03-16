@@ -121,10 +121,8 @@ public class LoadLastStringRequest implements DaoInterface {
     }
 
     private void updateEuro(Record record) {
-        ArrayList<Record> params = new ArrayList<>();
-        params.add(record);
 
-        Double euro = SessionHandler.selectedFare.toEuro(params);
+        Double euro = SessionHandler.selectedFare.toEuro(record);
 
         NumberFormat formatter = NumberFormat.getNumberInstance();
         formatter.setMinimumFractionDigits(2);
@@ -134,14 +132,20 @@ public class LoadLastStringRequest implements DaoInterface {
     }
     private void updateGauge(Record record) {
         int percentage = 100 * record.getConsumption()/SessionHandler.MAX_CONS;
+        if(percentage< 5){ //minimum 5% to show a small green bar instead all gray
+            percentage = 5;
+        }
         gauge.setHighValue(percentage);
     }
 
 
     private void updateGraph(Record record) {
         if(!SessionHandler.lastRecordPrevID.equals(record.getRecordID()) && SessionHandler.dashboardSeries != null) {
-           // SessionHandler.dashboardSeries.appendData(new DataPoint(record.getDateTime().getTime(), record.getY()/1000), true, 20000);
+            try {
+                SessionHandler.dashboardSeries.appendData(new DataPoint(record.getDateTime().getTime(), record.getConsumption() / 1000), true, 20000);
+            }catch (Exception e){
 
+            }
         }
     }
 }

@@ -66,7 +66,8 @@
             <RelativeLayout
                     android:layout_width="0dp"
                     android:layout_weight="6"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="16dp">
 
                     <TextView
                         android:id="@+id/textView1_day"
@@ -140,6 +141,7 @@
         </LinearLayout>
 
         <com.jjoe64.graphview.GraphView
+            android:visibility="gone"
             android:id="@+id/day_graph"
             android:layout_width="match_parent"
             android:layout_height="320dp"

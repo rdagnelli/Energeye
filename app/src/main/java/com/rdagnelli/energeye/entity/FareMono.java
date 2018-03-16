@@ -18,11 +18,12 @@ public class FareMono extends Fare {
 
     @Override
     public Double toEuro(ArrayList<Record> records) {
-        Double sum = 0.0;
-        for(Record record : records){
-            sum+= record.getConsumption();
-        }
-        Double result = sum * f0 / 1000;
-        return result;
+        double pulses = records.size();
+        return pulses / 1000 *f0;
+    }
+
+    @Override
+    public Double toEuro(Record record) {
+        return record.getConsumption() * f0 / 1000;
     }
 }

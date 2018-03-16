@@ -23,7 +23,9 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -112,24 +114,59 @@ public class LoadRecordsMonthStringRequest implements DaoInterface {
 
     private void drawGraph() {
 
-        DataPoint[] dataPoints = new DataPoint[records.size()];
-        for(int i=0; i<dataPoints.length; i++){
-            dataPoints[i] = new DataPoint(records.get(dataPoints.length - i -1).getDateTime().getTime(), records.get(dataPoints.length - i -1).getY()/1000);
+        if (records.size() > 0) {
+            graph.setVisibility(View.VISIBLE);
+
+            Calendar c = GregorianCalendar.getInstance();
+            c.setTime(date);
+            int daysInMonth = c.getActualMaximum(Calendar.DAY_OF_MONTH);
+            ArrayList<DataPoint> dataPointArrayList = new ArrayList<>();
+
+            for (int currDay = 0; currDay < daysInMonth; currDay++) {
+                double pulses = 0;
+                for (int i = 0; i < records.size(); i++) {
+                    int recordDay = records.get(i).getDateTime().get(Calendar.DAY_OF_MONTH);
+                    if (recordDay == currDay) {
+                        pulses++;
+                    }
+                }
+                if (pulses > 0) {
+
+                    double kwh = pulses / 1000d;
+                    Calendar currCalendar = Calendar.getInstance();
+                    currCalendar.setTime(date); //Must Override hour and minute
+                    currCalendar.set(Calendar.DAY_OF_MONTH, currDay);
+                    currCalendar.set(Calendar.HOUR_OF_DAY, 0);
+                    currCalendar.set(Calendar.MINUTE, 0);
+                    currCalendar.set(Calendar.SECOND, 0);
+                    dataPointArrayList.add(new DataPoint(currCalendar.getTime(), kwh));
+                }
+            }
+
+
+            DataPoint[] dataPoints = new DataPoint[dataPointArrayList.size()];
+            for (int i = 0; i < dataPoints.length; i++) {
+                dataPoints[i] = dataPointArrayList.get(i);
+            }
+
+
+            SessionHandler.dashboardSeries = new LineGraphSeries<>(dataPoints);
+            graph.addSeries(SessionHandler.dashboardSeries);
+
+
+            SimpleDateFormat format = new SimpleDateFormat("EEE", Locale.ITALIAN);
+            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(view.getContext(), format));
+            graph.getViewport().setMinX(dataPoints[0].getX());
+            graph.getViewport().setMaxX(dataPoints[dataPoints.length - 1].getX());
+            graph.getViewport().setXAxisBoundsManual(true);
+            graph.getViewport().setScrollable(true);
+            graph.getViewport().setScalable(true);
+            graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
+            graph.getGridLabelRenderer().setNumVerticalLabels(5);
+            graph.getGridLabelRenderer().setHumanRounding(true);
+            graph.getGridLabelRenderer().setTextSize(36f);
+
         }
-        SessionHandler.dashboardSeries = new LineGraphSeries<>(dataPoints);
-        graph.addSeries( SessionHandler.dashboardSeries);
-
-
-        SimpleDateFormat format = new SimpleDateFormat("dd", Locale.ITALIAN);
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(view.getContext(),format));
-        graph.getViewport().setMinX(dataPoints[0].getX());
-        graph.getViewport().setMaxX(dataPoints[dataPoints.length-1].getX());
-        graph.getViewport().setXAxisBoundsManual(true);
-        graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
-        graph.getGridLabelRenderer().setNumVerticalLabels(5);
-        graph.getGridLabelRenderer().setHumanRounding(true);
 
     }
-
-
 }

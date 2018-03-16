@@ -22,7 +22,7 @@ public class SessionHandler {
     public static LineGraphSeries<DataPoint> reportDaySeries;
     public static LineGraphSeries<DataPoint> reportMonthSeries;
     public static LineGraphSeries<DataPoint> reportYearSeries;
-    public static ArrayList<String> devices = new ArrayList<>();
+    public static String device;
     public static Fare selectedFare;
 
     private static final SessionHandler ourInstance = new SessionHandler();

@@ -18,5 +18,13 @@ public abstract class Fare {
         return name;
     }
 
+    /*
+        Convertion for total consumption
+    */
     public abstract Double toEuro(ArrayList<Record> records);
+
+    /*
+        Convertion for instant consumption
+     */
+    public abstract Double toEuro(Record record);
 }

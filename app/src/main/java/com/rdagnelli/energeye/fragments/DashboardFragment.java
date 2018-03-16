@@ -97,7 +97,7 @@ public class DashboardFragment extends Fragment {
         view =  inflater.inflate(R.layout.fragment_dashboard, container, false);
         //Place here view.findViewById
 
-        SessionHandler.devices.add("FH2W5PWL");
+        SessionHandler.device = "FH2W5PWL";
         setupFareSpinner(view);
         setupGauge(view);
         setupGraph(view);
@@ -126,7 +126,7 @@ public class DashboardFragment extends Fragment {
         ArrayList<Object> params = new ArrayList<>();
         params.add(view);
         params.add(currentDate);
-        params.add(SessionHandler.devices.get(0));
+        params.add(SessionHandler.device);
         params.add(graph);
 
         StringRequest stringRequest = new LoadRecordsDayStringRequest().getStringRequest(params);

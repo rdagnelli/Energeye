@@ -10,12 +10,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.rdagnelli.energeye.SessionHandler;
 import com.rdagnelli.energeye.entity.Record;
+import com.rdagnelli.energeye.label_formatter.YearLabelFormatter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,7 +25,9 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -111,24 +115,53 @@ public class LoadRecordsYearStringRequest implements DaoInterface {
 
     private void drawGraph() {
 
-        DataPoint[] dataPoints = new DataPoint[records.size()];
-        for(int i=0; i<dataPoints.length; i++){
-            dataPoints[i] = new DataPoint(records.get(dataPoints.length - i -1).getDateTime().getTime(), records.get(dataPoints.length - i -1).getY()/1000);
+        if (records.size() > 0) {
+            graph.setVisibility(View.VISIBLE);
+
+            int monthsInYear = 12;
+            ArrayList<DataPoint> dataPointArrayList = new ArrayList<>();
+
+            for (int currMonth = 0; currMonth < monthsInYear; currMonth++) {
+                double pulses = 0;
+                for (int i = 0; i < records.size(); i++) {
+                    int recordMonth = records.get(i).getDateTime().get(Calendar.MONTH);
+                    if (recordMonth == currMonth) {
+                        pulses++;
+                    }
+                }
+                double kwh=0;
+                if (pulses > 0) {
+                   kwh = pulses / 1000d;
+                }
+                dataPointArrayList.add(new DataPoint(currMonth, kwh));
+
+            }
+
+
+            DataPoint[] dataPoints = new DataPoint[dataPointArrayList.size()];
+            for (int i = 0; i < dataPoints.length; i++) {
+                dataPoints[i] = dataPointArrayList.get(i);
+            }
+
+
+            SessionHandler.dashboardSeries = new LineGraphSeries<>(dataPoints);
+            graph.addSeries(SessionHandler.dashboardSeries);
+
+
+            graph.getGridLabelRenderer().setLabelFormatter(new YearLabelFormatter());
+
+
+            graph.getViewport().setMinX(0);
+            graph.getViewport().setMaxX(11);
+
+            graph.getViewport().setXAxisBoundsManual(true);
+            graph.getViewport().setScrollable(true);
+            graph.getViewport().setScalable(true);
+            graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
+            graph.getGridLabelRenderer().setNumVerticalLabels(5);
+            graph.getGridLabelRenderer().setHumanRounding(true);
+            graph.getGridLabelRenderer().setTextSize(36f);
         }
-        SessionHandler.dashboardSeries = new LineGraphSeries<>(dataPoints);
-        graph.addSeries( SessionHandler.dashboardSeries);
-
-
-        SimpleDateFormat format = new SimpleDateFormat("MMM", Locale.ITALIAN);
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(view.getContext(),format));
-        graph.getViewport().setMinX(dataPoints[0].getX());
-        graph.getViewport().setMaxX(dataPoints[dataPoints.length-1].getX());
-        graph.getViewport().setXAxisBoundsManual(true);
-        graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
-        graph.getGridLabelRenderer().setNumVerticalLabels(5);
-        graph.getGridLabelRenderer().setHumanRounding(true);
 
     }
-
-
 }

@@ -10,6 +10,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
@@ -25,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -113,27 +115,65 @@ public class LoadRecordsDayStringRequest implements DaoInterface {
     }
 
     private void drawGraph() {
+        if (records.size() > 0) {
+            graph.setVisibility(View.VISIBLE);
+
+            int rowsHours = 24;
+            int colsMinutes = 12;
+            ArrayList<DataPoint> dataPointArrayList = new ArrayList<>();
+
+            for (int currHour = 0; currHour < rowsHours; currHour++) {
+                for (int curr5Min = 0; curr5Min < colsMinutes; curr5Min++) {
+                    double sum = 0;
+                    double pulses = 0;
+                    int currMin = curr5Min * 5;
+                    int currMaxMin = currMin + 5;
+                    for (int i = 0; i < records.size(); i++) {
+                        int recordMin = records.get(i).getDateTime().get(Calendar.MINUTE);
+                        int recordHour = records.get(i).getDateTime().get(Calendar.HOUR_OF_DAY);
+                        if (recordHour == currHour && recordMin >= currMin && recordMin < currMaxMin) {
+                            sum += records.get(i).getConsumption();
+                            pulses++;
+                        }
+                    }
+                    if (pulses > 0) {
+                        double avgKW = sum / pulses / 1000d;
+
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(date); //Must Override hour and minute
+                        c.set(Calendar.HOUR_OF_DAY, currHour);
+                        c.set(Calendar.MINUTE, currMin);
+                        c.set(Calendar.SECOND, 0);
+                        dataPointArrayList.add(new DataPoint(c.getTime(), avgKW));
+                    }
+                }
+            }
 
 
-        DataPoint[] dataPoints = new DataPoint[records.size()];
-        for(int i=0; i<dataPoints.length; i++){
-            dataPoints[i] = new DataPoint(records.get(dataPoints.length - i -1).getDateTime().getTime(), records.get(dataPoints.length - i -1).getY()/1000);
+            DataPoint[] dataPoints = new DataPoint[dataPointArrayList.size()];
+            for (int i = 0; i < dataPoints.length; i++) {
+                dataPoints[i] = dataPointArrayList.get(i);
+            }
+
+
+            SessionHandler.dashboardSeries = new LineGraphSeries<>(dataPoints);
+            graph.addSeries(SessionHandler.dashboardSeries);
+
+
+            SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.ITALIAN);
+            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(view.getContext(), format));
+            graph.getViewport().setMinX(dataPoints[0].getX());
+            graph.getViewport().setMaxX(dataPoints[dataPoints.length - 1].getX());
+            graph.getViewport().setXAxisBoundsManual(true);
+            graph.getViewport().setScrollable(true);
+            graph.getViewport().setScalable(true);
+            graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
+            graph.getGridLabelRenderer().setNumVerticalLabels(5);
+            graph.getGridLabelRenderer().setHumanRounding(true);
+            graph.getGridLabelRenderer().setTextSize(36f);
+
+
         }
-        SessionHandler.dashboardSeries = new LineGraphSeries<>(dataPoints);
-        graph.addSeries( SessionHandler.dashboardSeries);
-
-
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.ITALIAN);
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(view.getContext(),format));
-        graph.getViewport().setMinX(dataPoints[0].getX());
-        graph.getViewport().setMaxX(dataPoints[dataPoints.length-1].getX());
-        graph.getViewport().setXAxisBoundsManual(true);
-        graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
-        graph.getGridLabelRenderer().setNumVerticalLabels(5);
-        graph.getGridLabelRenderer().setHumanRounding(true);
-
-
     }
-
 
 }

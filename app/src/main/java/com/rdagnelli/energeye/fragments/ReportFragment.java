@@ -44,7 +44,7 @@ import java.util.Calendar;
  * Use the {@link ReportFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ReportFragment extends Fragment implements DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener{
+public class ReportFragment extends Fragment implements DatePickerDialog.OnDateSetListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -209,7 +209,7 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
                         ArrayList<Object> params = new ArrayList<>();
                         params.add(view);
                         params.add(calendar.getTime());
-                        params.add(SessionHandler.devices.get(0));
+                        params.add(SessionHandler.device);
                         params.add(monthGraph);
 
                         StringRequest stringRequest = new LoadRecordsMonthStringRequest().getStringRequest(params);
@@ -231,8 +231,8 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
                     c.set(Calendar.YEAR, Integer.parseInt(item));
                     ArrayList<Object> params = new ArrayList<>();
                     params.add(view);
-                    params.add(c);
-                    params.add(SessionHandler.devices.get(0));
+                    params.add(c.getTime());
+                    params.add(SessionHandler.device);
                     params.add(yearGraph);
 
                     StringRequest stringRequest = new LoadRecordsYearStringRequest().getStringRequest(params);
@@ -282,35 +282,16 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
         ArrayList<Object> params = new ArrayList<>();
         params.add(view);
         params.add(c.getTime());
-        params.add(SessionHandler.devices.get(0));
+        params.add(SessionHandler.device);
         params.add(dayGraph);
 
-        //StringRequest stringRequest = new LoadRecordsDayStringRequest().getStringRequest(params);
-        //AppController.getInstance().addToRequestQueue(stringRequest);
+        StringRequest stringRequest = new LoadRecordsDayStringRequest().getStringRequest(params);
+        AppController.getInstance().addToRequestQueue(stringRequest);
 
     }
 
-    //Year spinner overrides
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-        if (i != 0) {
-            Calendar c = Calendar.getInstance();
-            c.set(Calendar.YEAR, Integer.parseInt(adapterView.getItemAtPosition(i).toString()));
-            ArrayList<Object> params = new ArrayList<>();
-            params.add(view);
-            params.add(id);
-            params.add(SessionHandler.devices.get(0));
-            params.add(yearGraph);
 
-            StringRequest stringRequest = new LoadRecordsYearStringRequest().getStringRequest(params);
-            AppController.getInstance().addToRequestQueue(stringRequest);
-        }
-    }
 
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
-    }
 
     /**
      * This interface must be implemented by activities that contain this

@@ -41,7 +41,7 @@ public class LoadLastRunnable implements Runnable {
     public void gaugeRequest(View view){
         ArrayList<Object> params = new ArrayList<>();
         params.add(view);
-        params.add(SessionHandler.devices.get(0));
+        params.add(SessionHandler.device);
         params.add(view.findViewById(R.id.cons_value1));
         params.add(view.findViewById(R.id.eur_value1));
         params.add(gauge);
