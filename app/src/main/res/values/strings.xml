@@ -56,6 +56,7 @@
     <string name="consumo_totale">Consumo totale</string>
     <string name="seleziona_una_data">Seleziona una data</string>
     <string name="select_year">Seleziona un anno</string>
+    <string name="loading">Caricamento in corso...</string>
 
     <string-array name="year_array">
         <item>Seleziona un anno</item>

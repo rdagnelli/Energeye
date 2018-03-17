@@ -16,6 +16,7 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.rdagnelli.energeye.R;
 import com.rdagnelli.energeye.SessionHandler;
 import com.rdagnelli.energeye.entity.FareMono;
 import com.rdagnelli.energeye.entity.Record;
@@ -148,6 +149,9 @@ public class LoadRecordsYearStringRequest implements DaoInterface {
     }
 
     private void drawGraph() {
+        if (dataPoints.size() > 0) {
+            graph.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.loading_year).setVisibility(View.VISIBLE);
 
             DataPoint[] dp = new DataPoint[dataPoints.size()];
             for (int i = 0; i < dp.length; i++) {
@@ -169,7 +173,7 @@ public class LoadRecordsYearStringRequest implements DaoInterface {
             graph.getGridLabelRenderer().setNumVerticalLabels(5);
             graph.getGridLabelRenderer().setHumanRounding(true);
             graph.getGridLabelRenderer().setTextSize(36f);
+        }
     }
-
 
 }

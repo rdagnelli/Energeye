@@ -13,9 +13,11 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.rdagnelli.energeye.R;
 import com.rdagnelli.energeye.SessionHandler;
 import com.rdagnelli.energeye.entity.Record;
 import com.rdagnelli.energeye.label_formatter.YearLabelFormatter;
@@ -153,32 +155,33 @@ public class LoadRecordsMonthStringRequest implements DaoInterface {
 
 
     private void drawGraph() {
+        if (dataPoints.size() > 0) {
+            graph.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.loading_day).setVisibility(View.VISIBLE);
 
+            DataPoint[] dp = new DataPoint[dataPoints.size()];
+            for (int i = 0; i < dp.length; i++) {
+                dp[i] = dataPoints.get(i);
+            }
 
-        DataPoint[] dp = new DataPoint[dataPoints.size()];
-        for (int i = 0; i < dp.length; i++) {
-            dp[i] = dataPoints.get(i);
+            SessionHandler.reportMonthSeries = new LineGraphSeries<>(dp);
+            graph.addSeries(SessionHandler.reportMonthSeries);
+
+            graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter());
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            int maxMonthDays = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+            graph.getViewport().setMinX(0);
+            graph.getViewport().setMaxX(maxMonthDays);
+            graph.getViewport().setXAxisBoundsManual(true);
+            graph.getViewport().setScrollable(true);
+            graph.getViewport().setScalable(true);
+            graph.getGridLabelRenderer().setNumHorizontalLabels(5); // only 4 because of the space
+            graph.getGridLabelRenderer().setNumVerticalLabels(6);
+            graph.getGridLabelRenderer().setHumanRounding(true);
+            graph.getGridLabelRenderer().setTextSize(36f);
         }
-
-        SessionHandler.reportMonthSeries = new LineGraphSeries<>(dp);
-        graph.addSeries(SessionHandler.reportMonthSeries);
-
-        graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter());
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        int maxMonthDays = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-
-        graph.getViewport().setMinX(0);
-        graph.getViewport().setMaxX(maxMonthDays);
-
-        graph.getViewport().setXAxisBoundsManual(true);
-        graph.getViewport().setScrollable(true);
-        graph.getViewport().setScalable(true);
-        graph.getGridLabelRenderer().setNumHorizontalLabels(5); // only 4 because of the space
-        graph.getGridLabelRenderer().setNumVerticalLabels(6);
-        graph.getGridLabelRenderer().setHumanRounding(true);
-        graph.getGridLabelRenderer().setTextSize(36f);
     }
-
 }

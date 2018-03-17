@@ -138,18 +138,23 @@
             </RelativeLayout>
 
         </LinearLayout>
-
+        <TextView
+            android:id="@+id/loading_month"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:text="@string/loading"
+            android:textAlignment="center"
+            android:gravity="center"/>
         <com.jjoe64.graphview.GraphView
             android:visibility="gone"
             android:id="@+id/month_graph"
             android:layout_width="match_parent"
             android:layout_height="320dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginLeft="-8dp"
+            android:layout_marginStart="-8dp"
+            android:layout_marginRight="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginTop="24dp"/>
     </LinearLayout>
 
 

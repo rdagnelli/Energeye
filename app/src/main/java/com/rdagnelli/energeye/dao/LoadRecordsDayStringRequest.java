@@ -12,11 +12,14 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.rdagnelli.energeye.R;
 import com.rdagnelli.energeye.entity.Record;
 import com.rdagnelli.energeye.SessionHandler;
+import com.rdagnelli.energeye.label_formatter.DayLabelFormatter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -117,6 +120,7 @@ public class LoadRecordsDayStringRequest implements DaoInterface {
     private void drawGraph() {
         if (records.size() > 0) {
             graph.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.loading_day).setVisibility(View.VISIBLE);
 
             int rowsHours = 24;
             int colsMinutes = 12;
@@ -144,7 +148,7 @@ public class LoadRecordsDayStringRequest implements DaoInterface {
                         c.set(Calendar.HOUR_OF_DAY, currHour);
                         c.set(Calendar.MINUTE, currMin);
                         c.set(Calendar.SECOND, 0);
-                        dataPointArrayList.add(new DataPoint(c.get(Calendar.MINUTE), avgKW));
+                        dataPointArrayList.add(new DataPoint(c.getTime(), avgKW));
                     }
                 }
             }
@@ -159,9 +163,7 @@ public class LoadRecordsDayStringRequest implements DaoInterface {
             SessionHandler.dashboardSeries = new LineGraphSeries<>(dataPoints);
             graph.addSeries(SessionHandler.dashboardSeries);
 
-
-            SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.ITALIAN);
-            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(view.getContext(), format));
+            graph.getGridLabelRenderer().setLabelFormatter(new DayLabelFormatter());
             graph.getViewport().setMinX(dataPoints[0].getX());
             graph.getViewport().setMaxX(dataPoints[dataPoints.length - 1].getX());
             graph.getViewport().setXAxisBoundsManual(true);
