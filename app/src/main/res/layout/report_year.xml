@@ -84,7 +84,7 @@
                     android:layout_below="@id/textView1_year"
                     android:gravity="center">
                     <TextView
-                        android:id="@+id/year_kw"
+                        android:id="@+id/year_kwh"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/undefinedvalue"
@@ -117,7 +117,7 @@
                         android:text="@string/undefinedvalue"
                         android:textColor="@color/textPrimary"
                         android:textSize="24sp"
-                        android:layout_below="@id/year_kw"/>
+                        android:layout_below="@id/year_kwh"/>
 
                     <TextView
                         android:layout_width="wrap_content"

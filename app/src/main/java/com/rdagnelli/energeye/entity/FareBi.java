@@ -55,4 +55,9 @@ public class FareBi extends Fare {
             return record.getConsumption()*f23/1000;
         }
     }
+
+    @Override
+    public Double toEuro(double watthF1, double watthF23) {
+        return ((watthF1*f1) + (watthF23*f23))/1000;
+    }
 }

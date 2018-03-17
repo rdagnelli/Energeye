@@ -26,4 +26,9 @@ public class FareMono extends Fare {
     public Double toEuro(Record record) {
         return record.getConsumption() * f0 / 1000;
     }
+
+    @Override
+    public Double toEuro(double watthF1, double watthF23) {
+        return (watthF1+watthF23)*f0/1000;
+    }
 }

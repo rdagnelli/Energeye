@@ -3,6 +3,7 @@ package com.rdagnelli.energeye.dao;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -10,12 +11,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.rdagnelli.energeye.SessionHandler;
 import com.rdagnelli.energeye.entity.Record;
+import com.rdagnelli.energeye.label_formatter.YearLabelFormatter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,11 +39,15 @@ import java.util.Map;
  */
 public class LoadRecordsMonthStringRequest implements DaoInterface {
 
-    ArrayList<Record> records;
+    ArrayList<DataPoint> dataPoints = new ArrayList<>();
     private String deviceID;
     private View view;
     private Date date;
     private GraphView graph;
+    private double sumWatthF1;
+    private double sumWatthF23;
+    private TextView kwhTotTextView;
+    private TextView eurTotTextView;
 
     @Override
     public StringRequest getStringRequest(ArrayList<Object> params) {
@@ -48,9 +55,11 @@ public class LoadRecordsMonthStringRequest implements DaoInterface {
         date = (Date) params.get(1);
         deviceID = (String) params.get(2);
         graph = (GraphView) params.get(3);
+        kwhTotTextView = (TextView) params.get(4);
+        eurTotTextView = (TextView) params.get(5);
 
 
-        String url = "http://www.energeye.altervista.org/loadRecordsMonth.php";
+        String url = "http://www.energeye.altervista.org/getWatthMonth.php";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 url, new Response.Listener<String>(){
 
@@ -62,24 +71,44 @@ public class LoadRecordsMonthStringRequest implements DaoInterface {
                     Toast.makeText(view.getContext(), "Si è verificato un errore", Toast.LENGTH_LONG);
                 }else {
                     try {
-                        records = new ArrayList<>();
+
+                        graph.setVisibility(View.VISIBLE);
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTime(date);
+                        int maxMonthDays = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+                        double sumWatthF1Day[] = new double[maxMonthDays];
+                        double sumWatthF23Day[] = new double[maxMonthDays];
                         JSONArray objArray = new JSONArray(response);
                         for (int i = 0; i < objArray.length(); i++) {
                             JSONObject obj = objArray.getJSONObject(i);
 
-                            String recordID = obj.getString("ID");
-                            String deviceID = obj.getString("Device_ID");
                             int year = obj.getInt("Year");
                             int month = obj.getInt("Month");
                             int day = obj.getInt("Day");
-                            int hour = obj.getInt("Hour");
-                            int minute = obj.getInt("Minute");
-                            int second = obj.getInt("Second");
-                            int consumption = obj.getInt("Watt");
+                            int watthF1 = obj.getInt("WatthF1");
+                            int watthF23 = obj.getInt("WatthF23");
 
-                            Record currRecord = new Record(recordID, deviceID, year, month, day, hour, minute, second, consumption);
-                            records.add(currRecord);
+                            Calendar c = Calendar.getInstance();
+                            c.set(year,month,day);
+                            if(c.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || c.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY  ){
+                                sumWatthF23 += watthF1;
+                                sumWatthF23 += watthF23;
+                                sumWatthF23Day[day-1] += watthF1;
+                                sumWatthF23Day[day-1] += watthF23;
+                            }else{
+                                sumWatthF1 += watthF1;
+                                sumWatthF23 += watthF23;
+                                sumWatthF1Day[day-1] += watthF1;
+                                sumWatthF23Day[day-1] += watthF23;
+                            }
                         }
+
+                        for(int i=0; i<maxMonthDays; i++){
+                            dataPoints.add(new DataPoint(i, (sumWatthF1Day[i] + sumWatthF23Day[i])/1000d));
+                        }
+
+                        updateKWH();
+                        updateEur();
                         drawGraph();
 
                     } catch (JSONException e) {
@@ -112,61 +141,44 @@ public class LoadRecordsMonthStringRequest implements DaoInterface {
         return strReq;
     }
 
+    private void updateKWH() {
+        double kwh = Math.round(((sumWatthF1+sumWatthF23)/1000)*100.0) /100.0; //two decimal digits
+        kwhTotTextView.setText(String.valueOf(kwh));
+    }
+
+    private void updateEur() {
+        double eur = Math.round(SessionHandler.selectedFare.toEuro(sumWatthF1,sumWatthF23)*100.0)/100.0; //two decimal digits
+        eurTotTextView.setText(String.valueOf(eur));
+    }
+
+
     private void drawGraph() {
 
-        if (records.size() > 0) {
-            graph.setVisibility(View.VISIBLE);
 
-            Calendar c = GregorianCalendar.getInstance();
-            c.setTime(date);
-            int daysInMonth = c.getActualMaximum(Calendar.DAY_OF_MONTH);
-            ArrayList<DataPoint> dataPointArrayList = new ArrayList<>();
-
-            for (int currDay = 0; currDay < daysInMonth; currDay++) {
-                double pulses = 0;
-                for (int i = 0; i < records.size(); i++) {
-                    int recordDay = records.get(i).getDateTime().get(Calendar.DAY_OF_MONTH);
-                    if (recordDay == currDay) {
-                        pulses++;
-                    }
-                }
-                if (pulses > 0) {
-
-                    double kwh = pulses / 1000d;
-                    Calendar currCalendar = Calendar.getInstance();
-                    currCalendar.setTime(date); //Must Override hour and minute
-                    currCalendar.set(Calendar.DAY_OF_MONTH, currDay);
-                    currCalendar.set(Calendar.HOUR_OF_DAY, 0);
-                    currCalendar.set(Calendar.MINUTE, 0);
-                    currCalendar.set(Calendar.SECOND, 0);
-                    dataPointArrayList.add(new DataPoint(currCalendar.getTime(), kwh));
-                }
-            }
-
-
-            DataPoint[] dataPoints = new DataPoint[dataPointArrayList.size()];
-            for (int i = 0; i < dataPoints.length; i++) {
-                dataPoints[i] = dataPointArrayList.get(i);
-            }
-
-
-            SessionHandler.dashboardSeries = new LineGraphSeries<>(dataPoints);
-            graph.addSeries(SessionHandler.dashboardSeries);
-
-
-            SimpleDateFormat format = new SimpleDateFormat("EEE", Locale.ITALIAN);
-            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(view.getContext(), format));
-            graph.getViewport().setMinX(dataPoints[0].getX());
-            graph.getViewport().setMaxX(dataPoints[dataPoints.length - 1].getX());
-            graph.getViewport().setXAxisBoundsManual(true);
-            graph.getViewport().setScrollable(true);
-            graph.getViewport().setScalable(true);
-            graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
-            graph.getGridLabelRenderer().setNumVerticalLabels(5);
-            graph.getGridLabelRenderer().setHumanRounding(true);
-            graph.getGridLabelRenderer().setTextSize(36f);
-
+        DataPoint[] dp = new DataPoint[dataPoints.size()];
+        for (int i = 0; i < dp.length; i++) {
+            dp[i] = dataPoints.get(i);
         }
 
+        SessionHandler.reportMonthSeries = new LineGraphSeries<>(dp);
+        graph.addSeries(SessionHandler.reportMonthSeries);
+
+        graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter());
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int maxMonthDays = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        graph.getViewport().setMinX(0);
+        graph.getViewport().setMaxX(maxMonthDays);
+
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setScrollable(true);
+        graph.getViewport().setScalable(true);
+        graph.getGridLabelRenderer().setNumHorizontalLabels(5); // only 4 because of the space
+        graph.getGridLabelRenderer().setNumVerticalLabels(6);
+        graph.getGridLabelRenderer().setHumanRounding(true);
+        graph.getGridLabelRenderer().setTextSize(36f);
     }
+
 }

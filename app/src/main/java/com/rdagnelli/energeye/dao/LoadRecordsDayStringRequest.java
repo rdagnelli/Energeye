@@ -144,7 +144,7 @@ public class LoadRecordsDayStringRequest implements DaoInterface {
                         c.set(Calendar.HOUR_OF_DAY, currHour);
                         c.set(Calendar.MINUTE, currMin);
                         c.set(Calendar.SECOND, 0);
-                        dataPointArrayList.add(new DataPoint(c.getTime(), avgKW));
+                        dataPointArrayList.add(new DataPoint(c.get(Calendar.MINUTE), avgKW));
                     }
                 }
             }

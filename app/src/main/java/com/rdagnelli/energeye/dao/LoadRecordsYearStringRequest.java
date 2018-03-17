@@ -3,6 +3,7 @@ package com.rdagnelli.energeye.dao;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -16,6 +17,7 @@ import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.rdagnelli.energeye.SessionHandler;
+import com.rdagnelli.energeye.entity.FareMono;
 import com.rdagnelli.energeye.entity.Record;
 import com.rdagnelli.energeye.label_formatter.YearLabelFormatter;
 
@@ -38,11 +40,15 @@ import java.util.Map;
  */
 public class LoadRecordsYearStringRequest implements DaoInterface {
 
-    ArrayList<Record> records;
+    private ArrayList<DataPoint> dataPoints = new ArrayList<>();
     private String deviceID;
     private View view;
     private Date date;
     private GraphView graph;
+    private double sumWatthF1;
+    private double sumWatthF23;
+    private TextView kwhTotTextView;
+    private TextView eurTotTextView;
 
     @Override
     public StringRequest getStringRequest(ArrayList<Object> params) {
@@ -50,9 +56,11 @@ public class LoadRecordsYearStringRequest implements DaoInterface {
         date = (Date) params.get(1);
         deviceID = (String) params.get(2);
         graph = (GraphView) params.get(3);
+        kwhTotTextView = (TextView) params.get(4);
+        eurTotTextView = (TextView) params.get(5);
 
+        String url= "http://www.energeye.altervista.org/getWatthYear.php";
 
-        String url = "http://www.energeye.altervista.org/loadRecordsYear.php";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 url, new Response.Listener<String>(){
 
@@ -64,24 +72,40 @@ public class LoadRecordsYearStringRequest implements DaoInterface {
                     Toast.makeText(view.getContext(), "Si è verificato un errore", Toast.LENGTH_LONG);
                 }else {
                     try {
-                        records = new ArrayList<>();
+                        double sumWatthF1Month[] = new double[12];
+                        double sumWatthF23Month[] = new double[12];
                         JSONArray objArray = new JSONArray(response);
                         for (int i = 0; i < objArray.length(); i++) {
                             JSONObject obj = objArray.getJSONObject(i);
 
-                            String recordID = obj.getString("ID");
-                            String deviceID = obj.getString("Device_ID");
                             int year = obj.getInt("Year");
                             int month = obj.getInt("Month");
                             int day = obj.getInt("Day");
-                            int hour = obj.getInt("Hour");
-                            int minute = obj.getInt("Minute");
-                            int second = obj.getInt("Second");
-                            int consumption = obj.getInt("Watt");
+                            int watthF1 = obj.getInt("WatthF1");
+                            int watthF23 = obj.getInt("WatthF23");
 
-                            Record currRecord = new Record(recordID, deviceID, year, month, day, hour, minute, second, consumption);
-                            records.add(currRecord);
+
+                                Calendar c = Calendar.getInstance();
+                                c.set(year,month,day);
+                                if(c.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || c.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY  ){
+                                    sumWatthF23 += watthF1;
+                                    sumWatthF23 += watthF23;
+                                    sumWatthF23Month[month-1] += watthF1;
+                                    sumWatthF23Month[month-1] += watthF23;
+                                }else{
+                                    sumWatthF1 += watthF1;
+                                    sumWatthF23 += watthF23;
+                                    sumWatthF1Month[month-1] += watthF1;
+                                    sumWatthF23Month[month-1] += watthF23;
+                                }
                         }
+
+                        for(int i=0; i<12; i++){
+                            dataPoints.add(new DataPoint(i, (sumWatthF1Month[i] + sumWatthF23Month[i])/1000d));
+                        }
+
+                        updateKWH();
+                        updateEur();
                         drawGraph();
 
                     } catch (JSONException e) {
@@ -113,43 +137,27 @@ public class LoadRecordsYearStringRequest implements DaoInterface {
         return strReq;
     }
 
+    private void updateKWH() {
+        double kwh = Math.round(((sumWatthF1+sumWatthF23)/1000)*100.0) /100.0; //two decimal digits
+        kwhTotTextView.setText(String.valueOf(kwh));
+    }
+
+    private void updateEur() {
+        double eur = Math.round(SessionHandler.selectedFare.toEuro(sumWatthF1,sumWatthF23)*100.0)/100.0; //two decimal digits
+        eurTotTextView.setText(String.valueOf(eur));
+    }
+
     private void drawGraph() {
 
-        if (records.size() > 0) {
-            graph.setVisibility(View.VISIBLE);
-
-            int monthsInYear = 12;
-            ArrayList<DataPoint> dataPointArrayList = new ArrayList<>();
-
-            for (int currMonth = 0; currMonth < monthsInYear; currMonth++) {
-                double pulses = 0;
-                for (int i = 0; i < records.size(); i++) {
-                    int recordMonth = records.get(i).getDateTime().get(Calendar.MONTH);
-                    if (recordMonth == currMonth) {
-                        pulses++;
-                    }
-                }
-                double kwh=0;
-                if (pulses > 0) {
-                   kwh = pulses / 1000d;
-                }
-                dataPointArrayList.add(new DataPoint(currMonth, kwh));
-
+            DataPoint[] dp = new DataPoint[dataPoints.size()];
+            for (int i = 0; i < dp.length; i++) {
+                dp[i] = dataPoints.get(i);
             }
 
-
-            DataPoint[] dataPoints = new DataPoint[dataPointArrayList.size()];
-            for (int i = 0; i < dataPoints.length; i++) {
-                dataPoints[i] = dataPointArrayList.get(i);
-            }
-
-
-            SessionHandler.dashboardSeries = new LineGraphSeries<>(dataPoints);
-            graph.addSeries(SessionHandler.dashboardSeries);
-
+            SessionHandler.reportYearSeries = new LineGraphSeries<>(dp);
+            graph.addSeries(SessionHandler.reportYearSeries);
 
             graph.getGridLabelRenderer().setLabelFormatter(new YearLabelFormatter());
-
 
             graph.getViewport().setMinX(0);
             graph.getViewport().setMaxX(11);
@@ -161,7 +169,7 @@ public class LoadRecordsYearStringRequest implements DaoInterface {
             graph.getGridLabelRenderer().setNumVerticalLabels(5);
             graph.getGridLabelRenderer().setHumanRounding(true);
             graph.getGridLabelRenderer().setTextSize(36f);
-        }
-
     }
+
+
 }

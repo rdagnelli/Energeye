@@ -154,7 +154,7 @@ public class DashboardFragment extends Fragment {
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            Toast.makeText(context, "Dashboard Fragment Attached", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Caricamento in corso...", Toast.LENGTH_SHORT).show();
         }
     }
 

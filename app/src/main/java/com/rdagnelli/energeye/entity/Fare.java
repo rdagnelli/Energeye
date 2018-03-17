@@ -27,4 +27,10 @@ public abstract class Fare {
         Convertion for instant consumption
      */
     public abstract Double toEuro(Record record);
+
+    /*
+        Convertion for instant consumption
+     */
+    public abstract Double toEuro(double watthF1, double watthF23);
+
 }
