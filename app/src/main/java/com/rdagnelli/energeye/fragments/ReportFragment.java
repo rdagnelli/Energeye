@@ -60,6 +60,9 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
     GraphView monthGraph;
     GraphView yearGraph;
 
+    TextView loadingDay;
+    TextView loadingMonth;
+    TextView loadingYear;
     TextView dayKwhTot;
     TextView dayEurTot;
     TextView monthKwhTot;
@@ -130,6 +133,10 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
         dayEurTot = view.findViewById(R.id.day_eur);
         monthEurTot = view.findViewById(R.id.month_eur);
         yearEurTot = view.findViewById(R.id.year_eur);
+
+        loadingDay = view.findViewById(R.id.loading_day);
+        loadingMonth = view.findViewById(R.id.loading_month);
+        loadingYear = view.findViewById(R.id.loading_year);
     }
 
     private void setupSpinners(View view) {
@@ -161,6 +168,9 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
         params.add(now.getTime());
         params.add(SessionHandler.device);
         params.add(dayGraph);
+        params.add(dayKwhTot);
+        params.add(dayEurTot);
+        params.add(loadingDay);
         StringRequest stringRequest = new LoadRecordsDayStringRequest().getStringRequest(params);
         AppController.getInstance().addToRequestQueue(stringRequest);
 
@@ -173,6 +183,7 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
         params2.add(monthGraph);
         params2.add(monthKwhTot);
         params2.add(monthEurTot);
+        params2.add(loadingMonth);
         StringRequest stringRequest2 = new LoadRecordsMonthStringRequest().getStringRequest(params2);
         AppController.getInstance().addToRequestQueue(stringRequest2);
 
@@ -186,6 +197,7 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
         params3.add(yearGraph);
         params3.add(yearKwhTot);
         params3.add(yearEurTot);
+        params3.add(loadingYear);
         StringRequest stringRequest3 = new LoadRecordsYearStringRequest().getStringRequest(params3);
         AppController.getInstance().addToRequestQueue(stringRequest3);
 
@@ -261,6 +273,7 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
                         params.add(monthGraph);
                         params.add(monthKwhTot);
                         params.add(monthEurTot);
+                        params.add(loadingMonth);
 
                         StringRequest stringRequest = new LoadRecordsMonthStringRequest().getStringRequest(params);
                         AppController.getInstance().addToRequestQueue(stringRequest);
@@ -286,6 +299,7 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
                     params.add(yearGraph);
                     params.add(yearKwhTot);
                     params.add(yearEurTot);
+                    params.add(loadingYear);
 
                     StringRequest stringRequest = new LoadRecordsYearStringRequest().getStringRequest(params);
                     AppController.getInstance().addToRequestQueue(stringRequest);
@@ -307,7 +321,6 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            Toast.makeText(context, "Analysis Fragment Attached", Toast.LENGTH_SHORT).show();
 
         }
     }
@@ -336,6 +349,9 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
         params.add(c.getTime());
         params.add(SessionHandler.device);
         params.add(dayGraph);
+        params.add(dayKwhTot);
+        params.add(dayEurTot);
+        params.add(loadingDay);
 
         StringRequest stringRequest = new LoadRecordsDayStringRequest().getStringRequest(params);
         AppController.getInstance().addToRequestQueue(stringRequest);

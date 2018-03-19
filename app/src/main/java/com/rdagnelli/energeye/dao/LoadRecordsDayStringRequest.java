@@ -3,6 +3,7 @@ package com.rdagnelli.energeye.dao;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -25,6 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,6 +47,9 @@ public class LoadRecordsDayStringRequest implements DaoInterface {
     private View view;
     private Date date;
     private GraphView graph;
+    private TextView kwhTotTextView;
+    private TextView eurTotTextView;
+    private TextView loading;
 
     @Override
     public StringRequest getStringRequest(ArrayList<Object> params) {
@@ -52,6 +57,9 @@ public class LoadRecordsDayStringRequest implements DaoInterface {
         date = (Date) params.get(1);
         deviceID = (String) params.get(2);
         graph = (GraphView) params.get(3);
+        kwhTotTextView = (TextView) params.get(4);
+        eurTotTextView = (TextView) params.get(5);
+        loading = (TextView) params.get(6);
 
 
         String url = "http://www.energeye.altervista.org/loadRecordsDay.php";
@@ -84,6 +92,8 @@ public class LoadRecordsDayStringRequest implements DaoInterface {
                             Record currRecord = new Record(recordID, deviceID, year, month, day, hour, minute, second, consumption);
                             records.add(currRecord);
                         }
+                        updateKWH();
+                        updateEur();
                         drawGraph();
 
                     } catch (JSONException e) {
@@ -117,10 +127,22 @@ public class LoadRecordsDayStringRequest implements DaoInterface {
         return strReq;
     }
 
+    private void updateEur() {
+        if(SessionHandler.selectedFare != null) {
+            double eur = Math.round(SessionHandler.selectedFare.toEuro(records) * 100.0) / 100.0; //two decimal digits
+            eurTotTextView.setText(new DecimalFormat("##.##").format(eur));
+        }
+    }
+
+    private void updateKWH() {
+        double kwh = Math.round((((double)records.size())/1000d)*100.0) /100.0; //two decimal digits;
+        kwhTotTextView.setText(new DecimalFormat("##.##").format(kwh));
+    }
+
     private void drawGraph() {
         if (records.size() > 0) {
             graph.setVisibility(View.VISIBLE);
-            view.findViewById(R.id.loading_day).setVisibility(View.VISIBLE);
+            loading.setVisibility(View.GONE);
 
             int rowsHours = 24;
             int colsMinutes = 12;

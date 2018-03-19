@@ -1,13 +1,20 @@
 package com.rdagnelli.energeye.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.StringRequest;
@@ -46,6 +53,8 @@ public class DashboardFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    String typedText="";
+
     private OnFragmentInteractionListener mListener;
 
     View view;
@@ -55,9 +64,11 @@ public class DashboardFragment extends Fragment {
     MaterialSpinner fareSpinner;
     LoadLastRunnable loadLastRunnable;
 
+    TextView loadingDay;
 
     private Handler handler;
-
+    private TextView dayKwhTot;
+    private TextView dayEurTot;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -97,7 +108,27 @@ public class DashboardFragment extends Fragment {
         view =  inflater.inflate(R.layout.fragment_dashboard, container, false);
         //Place here view.findViewById
 
-        SessionHandler.device = "FH2W5PWL";
+        SessionHandler.device = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("pref_device_id", null);
+        if(SessionHandler.device == null){
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Inserisci il codice del tuo dispositivo");
+            final EditText input = new EditText(getActivity());
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    typedText = input.getText().toString();
+                    if(typedText.length() ==8){
+                        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString("pref_device_id", typedText).commit();
+                    }else{
+                        Toast.makeText(getActivity(), "Codice non valido", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+            builder.show();
+        }
         setupFareSpinner(view);
         setupGauge(view);
         setupGraph(view);
@@ -119,6 +150,9 @@ public class DashboardFragment extends Fragment {
     }
 
     private void setupGraph(View view) {
+        loadingDay = (TextView) view.findViewById(R.id.loading_dashboard);
+        dayEurTot = (TextView) view.findViewById(R.id.eur_value2);
+        dayKwhTot = (TextView) view.findViewById(R.id.cons_value2);
         graph = (GraphView) view.findViewById(R.id.chart1);
 
         Date currentDate = Calendar.getInstance().getTime();
@@ -128,6 +162,9 @@ public class DashboardFragment extends Fragment {
         params.add(currentDate);
         params.add(SessionHandler.device);
         params.add(graph);
+        params.add(dayKwhTot);
+        params.add(dayEurTot);
+        params.add(loadingDay);
 
         StringRequest stringRequest = new LoadRecordsDayStringRequest().getStringRequest(params);
         AppController.getInstance().addToRequestQueue(stringRequest);
@@ -154,7 +191,6 @@ public class DashboardFragment extends Fragment {
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            Toast.makeText(context, "Caricamento in corso...", Toast.LENGTH_SHORT).show();
         }
     }
 

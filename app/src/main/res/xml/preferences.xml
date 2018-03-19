@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Impostazioni"
+        android:key="pref_key_storage_settings"
+        >
+
+        <EditTextPreference
+            android:key="pref_device_id"
+            android:summary="Tocca qui per inserirlo"
+            android:title="Codice dispositivo"
+            android:defaultValue="none"/>
+
+        <SwitchPreference
+            android:key="pref_alarm"
+            android:summary="Attivato"
+            android:title="Allarme distacco corrente"
+            android:defaultValue="true" />
+
+        <Preference
+            android:key="pref_logout"
+            android:summary="roberto.dagnelli@gmail.com"
+            android:title="Logout"
+            android:defaultValue="-"/>
+        <Preference
+            android:key="pref_info"
+            android:title="Informazioni app"
+            android:defaultValue="-"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

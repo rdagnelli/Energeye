@@ -21,6 +21,7 @@ import com.rdagnelli.energeye.SessionHandler;
 import com.rdagnelli.energeye.dao.LoadLastStringRequest;
 import com.rdagnelli.energeye.fragments.DashboardFragment;
 import com.rdagnelli.energeye.fragments.ReportFragment;
+import com.rdagnelli.energeye.fragments.SettingsFragment;
 
 import java.util.ArrayList;
 
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity  {
                     transaction.replace(R.id.content, new DashboardFragment()).commit();
                     return true;
                 case R.id.navigation_settings:
+                    transaction.replace(R.id.content, new SettingsFragment()).commit();
                     return true;
             }
             return false;
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toast.makeText(this, "Bentornato " + FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Bentornato " + FirebaseAuth.getInstance().getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);

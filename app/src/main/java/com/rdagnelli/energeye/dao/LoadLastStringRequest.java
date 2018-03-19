@@ -122,13 +122,15 @@ public class LoadLastStringRequest implements DaoInterface {
 
     private void updateEuro(Record record) {
 
-        Double euro = SessionHandler.selectedFare.toEuro(record);
+        if(SessionHandler.selectedFare != null) {
+            Double euro = SessionHandler.selectedFare.toEuro(record);
 
-        NumberFormat formatter = NumberFormat.getNumberInstance();
-        formatter.setMinimumFractionDigits(2);
-        formatter.setMaximumFractionDigits(2);
-        String output = formatter.format(euro);
-        euroTextView.setText(String.valueOf(output));
+            NumberFormat formatter = NumberFormat.getNumberInstance();
+            formatter.setMinimumFractionDigits(2);
+            formatter.setMaximumFractionDigits(2);
+            String output = formatter.format(euro);
+            euroTextView.setText(String.valueOf(output));
+        }
     }
     private void updateGauge(Record record) {
         int percentage = 100 * record.getConsumption()/SessionHandler.MAX_CONS;

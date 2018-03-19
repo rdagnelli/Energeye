@@ -57,6 +57,9 @@
     <string name="seleziona_una_data">Seleziona una data</string>
     <string name="select_year">Seleziona un anno</string>
     <string name="loading">Caricamento in corso...</string>
+    <string name="touch_here_to_insert">Tocca qui per inserirlo</string>
+    <string name="deactivated">Disattivato</string>
+    <string name="activated">Attivato</string>
 
     <string-array name="year_array">
         <item>Seleziona un anno</item>

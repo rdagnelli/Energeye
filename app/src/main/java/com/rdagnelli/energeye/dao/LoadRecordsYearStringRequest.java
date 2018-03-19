@@ -26,6 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,6 +51,7 @@ public class LoadRecordsYearStringRequest implements DaoInterface {
     private double sumWatthF23;
     private TextView kwhTotTextView;
     private TextView eurTotTextView;
+    private TextView loading;
 
     @Override
     public StringRequest getStringRequest(ArrayList<Object> params) {
@@ -59,6 +61,7 @@ public class LoadRecordsYearStringRequest implements DaoInterface {
         graph = (GraphView) params.get(3);
         kwhTotTextView = (TextView) params.get(4);
         eurTotTextView = (TextView) params.get(5);
+        loading = (TextView) params.get(6);
 
         String url= "http://www.energeye.altervista.org/getWatthYear.php";
 
@@ -140,18 +143,20 @@ public class LoadRecordsYearStringRequest implements DaoInterface {
 
     private void updateKWH() {
         double kwh = Math.round(((sumWatthF1+sumWatthF23)/1000)*100.0) /100.0; //two decimal digits
-        kwhTotTextView.setText(String.valueOf(kwh));
+        kwhTotTextView.setText(new DecimalFormat("##.##").format(kwh));
     }
 
     private void updateEur() {
-        double eur = Math.round(SessionHandler.selectedFare.toEuro(sumWatthF1,sumWatthF23)*100.0)/100.0; //two decimal digits
-        eurTotTextView.setText(String.valueOf(eur));
+        if(SessionHandler.selectedFare != null) {
+            double eur = Math.round(SessionHandler.selectedFare.toEuro(sumWatthF1, sumWatthF23) * 100.0) / 100.0; //two decimal digits
+            eurTotTextView.setText(new DecimalFormat("##.##").format(eur));
+        }
     }
 
     private void drawGraph() {
         if (dataPoints.size() > 0) {
             graph.setVisibility(View.VISIBLE);
-            view.findViewById(R.id.loading_year).setVisibility(View.VISIBLE);
+            loading.setVisibility(View.GONE);
 
             DataPoint[] dp = new DataPoint[dataPoints.size()];
             for (int i = 0; i < dp.length; i++) {

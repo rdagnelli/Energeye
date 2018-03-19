@@ -24,7 +24,7 @@
                     android:id="@+id/fare_picker_spinner_dashboard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/seleziona_la_tua_tariffa"
+                    android:hint="@string/loading"
                     android:textColorHint="@color/textPrimary" />
             </android.support.v7.widget.CardView>
             <LinearLayout
@@ -73,7 +73,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="0dp"
                             android:textSize="12sp"
-                            android:text="kWh"
+                            android:text="@string/kw"
                             android:padding="3dp"
                             android:textColor="@color/textSecondary"
                             android:layout_toRightOf="@id/cons_value1"
@@ -155,7 +155,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="0dp"
                             android:textSize="12sp"
-                            android:text="@string/kw"
+                            android:text="@string/kwh"
                             android:padding="3dp"
                             android:textColor="@color/textSecondary"
                             android:layout_toRightOf="@id/cons_value2"
@@ -211,7 +211,15 @@
                             android:textSize="14sp"
                             />
 
+                        <TextView
+                            android:id="@+id/loading_dashboard"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:text="@string/loading"
+                            android:textAlignment="center"
+                            android:gravity="center"/>
                         <com.jjoe64.graphview.GraphView
+                            android:visibility="gone"
                             android:id="@+id/chart1"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"

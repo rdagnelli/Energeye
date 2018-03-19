@@ -2,6 +2,7 @@ package com.rdagnelli.energeye.dao;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -130,9 +131,9 @@ public class LoadFaresStringRequest implements DaoInterface {
                 spinner.setText(item);
                 if(position != 0) { //Seleziona una tariffa
                     SessionHandler.selectedFare = fareArrayList.get(position - 1);
-                    SharedPreferences sharedPreferences = view.getContext().getSharedPreferences("SETTINGS", Context.MODE_PRIVATE);
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("SELECTED_FARE_NAME", item);
+                    editor.putString("pref_fare", item);
                     editor.commit();
 
                     Toast.makeText(view.getContext(), "Tariffa \"" + SessionHandler.selectedFare.getName() + "\" selezionata", Toast.LENGTH_LONG).show();
@@ -140,8 +141,8 @@ public class LoadFaresStringRequest implements DaoInterface {
             }
         });
 
-        SharedPreferences sharedPreferences = view.getContext().getSharedPreferences("SETTINGS", Context.MODE_PRIVATE);
-        String savedFareName = sharedPreferences.getString("SELECTED_FARE_NAME",null);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+        String savedFareName = sharedPreferences.getString("pref_fare", view.getResources().getString(R.string.select_your_fare));
         if(savedFareName != null && !savedFareName.equals("")){
             spinner.setText(savedFareName);
             for(Fare fare: fareArrayList){

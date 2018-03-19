@@ -34,6 +34,7 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout" >
                 android:textColorHint="@color/white">
 
                 <EditText
@@ -51,6 +52,7 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout" >
                 android:textColorHint="@color/white">
 
                 <EditText

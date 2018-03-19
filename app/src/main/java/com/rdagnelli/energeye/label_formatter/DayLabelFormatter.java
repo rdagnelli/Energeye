@@ -18,7 +18,9 @@ public class DayLabelFormatter extends DefaultLabelFormatter {
             Calendar c = Calendar.getInstance();
             c.setTime(date);
             String h = String.valueOf(c.get(Calendar.HOUR_OF_DAY));
+            if(Integer.parseInt(h)<10) h="0" + h;
             String m = String.valueOf(5*(Math.round(c.get(Calendar.MINUTE)/5)));
+            if(Integer.parseInt(m)<10) m="0" + m;
             return h+":"+m;
         } else {
             return super.formatLabel(value, isValueX);
