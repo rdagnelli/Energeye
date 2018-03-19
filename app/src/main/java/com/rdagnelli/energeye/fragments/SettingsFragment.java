@@ -87,7 +87,11 @@ public class SettingsFragment extends PreferenceFragment {
                 alertDialog.setTitle("Informazioni App");
 
                     alertDialog.setMessage("Versione: " + getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(),0).versionCode
-                     + "\nL'app Energeye è stata sviluppata da Roberto D'Agnelli come progetto di tesi di laurea in Informatica e Tecnologie per la Produzione di Software dell'Università degli Studi di Bari \"Aldo Moro\" nell'anno accademico 2016/17, grazie al relatore: Prof. Paolo Buono");
+                     + "\nL'app Energeye è stata sviluppata da Roberto D'Agnelli come progetto di tesi di laurea.\n" +
+                            "Corso: Informatica e Tecnologie per la Produzione di Software\n" +
+                            "Università degli Studi di Bari \"Aldo Moro\"\n" +
+                            "Anno accademico 2016/17\n" +
+                            "Relatore: Prof. Paolo Buono");
 
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                         new DialogInterface.OnClickListener() {

@@ -1,14 +1,19 @@
 package com.rdagnelli.energeye.fragments;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -124,6 +129,36 @@ public class ReportFragment extends Fragment implements DatePickerDialog.OnDateS
 
         return view;
     }
+
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        LinearLayout dayDash = view.findViewById(R.id.day_dash);
+        LinearLayout monthDash = view.findViewById(R.id.month_dash);
+        LinearLayout yearDash = view.findViewById(R.id.year_dash);
+        if( newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            FrameLayout content = getActivity().findViewById(R.id.content);
+            ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) content.getLayoutParams();
+            lp.setMargins(0,0,0,0);
+            content.setLayoutParams(lp);
+
+            SessionHandler.bottomNavigationView.setVisibility(View.GONE);
+            tabHost.getTabWidget().setVisibility(View.GONE);
+            dayDash.setVisibility(View.GONE);
+            monthDash.setVisibility(View.GONE);
+            yearDash.setVisibility(View.GONE);
+        }else{
+            FrameLayout content = getActivity().findViewById(R.id.content);
+            ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) content.getLayoutParams();
+            lp.setMargins(0,0,0,56);
+            content.setLayoutParams(lp);
+            SessionHandler.bottomNavigationView.setVisibility(View.VISIBLE);
+            tabHost.getTabWidget().setVisibility(View.VISIBLE);
+            dayDash.setVisibility(View.VISIBLE);
+            monthDash.setVisibility(View.VISIBLE);
+            yearDash.setVisibility(View.VISIBLE);
+        }
+    }
+
 
     private void setupTextViews(View view) {
         dayKwhTot = view.findViewById(R.id.day_kwh);

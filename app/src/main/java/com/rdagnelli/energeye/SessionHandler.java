@@ -1,6 +1,7 @@
 package com.rdagnelli.energeye;
 
 import android.content.SharedPreferences;
+import android.support.design.widget.BottomNavigationView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.jjoe64.graphview.series.DataPoint;
@@ -18,6 +19,7 @@ public class SessionHandler {
     public static int MAX_CONS = 7200;
     public static String lastRecordPrevID ="";
 
+    public static BottomNavigationView bottomNavigationView;
     public static LineGraphSeries<DataPoint> dashboardSeries;
     public static LineGraphSeries<DataPoint> reportDaySeries;
     public static LineGraphSeries<DataPoint> reportMonthSeries;

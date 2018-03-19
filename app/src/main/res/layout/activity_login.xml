@@ -45,7 +45,7 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout" >
+                app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
                 android:textColorHint="@color/white">
 
                 <EditText
@@ -56,14 +56,14 @@
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"/>
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout" >
+                app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
                 android:textColorHint="@color/white">
 
                 <EditText

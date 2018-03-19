@@ -2,6 +2,7 @@ package com.rdagnelli.energeye.fragments;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,6 +24,8 @@ import com.jjoe64.graphview.GraphView;
 import com.rdagnelli.energeye.AppController;
 import com.rdagnelli.energeye.R;
 import com.rdagnelli.energeye.SessionHandler;
+import com.rdagnelli.energeye.activities.FirstTimeActivity;
+import com.rdagnelli.energeye.activities.MainActivity;
 import com.rdagnelli.energeye.dao.LoadFaresStringRequest;
 import com.rdagnelli.energeye.dao.LoadRecordsDayStringRequest;
 import com.rdagnelli.energeye.runnable.LoadLastRunnable;
@@ -108,27 +111,7 @@ public class DashboardFragment extends Fragment {
         view =  inflater.inflate(R.layout.fragment_dashboard, container, false);
         //Place here view.findViewById
 
-        SessionHandler.device = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("pref_device_id", null);
-        if(SessionHandler.device == null){
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("Inserisci il codice del tuo dispositivo");
-            final EditText input = new EditText(getActivity());
-            input.setInputType(InputType.TYPE_CLASS_TEXT);
-            builder.setView(input);
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    typedText = input.getText().toString();
-                    if(typedText.length() ==8){
-                        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString("pref_device_id", typedText).commit();
-                    }else{
-                        Toast.makeText(getActivity(), "Codice non valido", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
 
-            builder.show();
-        }
         setupFareSpinner(view);
         setupGauge(view);
         setupGraph(view);
@@ -249,7 +232,6 @@ public class DashboardFragment extends Fragment {
 
     private void setupFareSpinner(View view) {
         fareSpinner = (MaterialSpinner) view.findViewById(R.id.fare_picker_spinner_dashboard);
-
 
 
         ArrayList<Object> params = new ArrayList<>();
